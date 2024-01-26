@@ -1,0 +1,575 @@
+<?php
+include "../classes/dbh.classes.php";
+include "../classes/inquiries.classes.php";
+
+
+session_start();
+@$userid = $_SESSION["userid"];
+$inquiries = new inquiries();
+
+$getUserInquiriesClosedList = $inquiries->getUserInquiriesClosedList($userid);
+
+if($getUserInquiriesClosedList[0]==200){
+    $getUserInquiriesClosedList = $getUserInquiriesClosedList[2];
+}else{
+    $getUserInquiriesClosedList = null;
+}
+
+
+$getUserInquiriesPendingList = $inquiries->getUserInquiriesPendingList($userid);
+
+if($getUserInquiriesPendingList[0]==200){
+    $getUserInquiriesPendingList = $getUserInquiriesPendingList[2];
+}else{
+    $getUserInquiriesPendingList = null;
+}
+
+?>
+
+<HTML>
+  <HEAD>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例--->
+    <title>inquiry space</title>
+    <link rel="stylesheet" href="inq.css">
+    <META HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=edge; charset=UTF-8">
+    <META NAME="Author" CONTENT="K.H.VAT (Mr)">
+    <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+       <link rel="stylesheet" href="../css/font-awesome.min.css"><!---符号---->
+
+      <link rel="stylesheet" href="../css/bootstrap.min.css" >
+
+      <script src="../js/jquery_1.9.1_jquery.min.js"></script>
+
+      <script>
+
+          function CreAInq() {
+              $.ajax({
+                  type: 'POST',
+                  url: './HandleInq_aciton.php',
+                  data : {action:"create"},
+                  dataType: 'json',
+                  success: function (data) {
+                      if(data.code == 200){
+                          location.reload();
+                      }else{
+                          window.location.href="../login_form.php";
+                      }
+                  },
+                  error: function (xhr, type) {
+
+                  }
+              });
+          }
+      </script>
+  </HEAD>
+  <BODY>
+
+
+
+    <section class="header">
+      <nav>
+        <a href="../UM/index.html"><img src="../../images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="student.php">Students</a></li>
+            <li><a href="../../teachers/teacher.php">Teachers</a></li>
+            <li><a href="request.php">Inquiry Requests</a></li>
+            <li><a href="../inquiry.php">Inquiry Home</a></li>
+            <li><a href="../real.php">REAL</a></li>
+         <?php 
+        if(isset($_SESSION["userid"]))
+        {
+      ?>
+		<li><a href="#"><?php echo $_SESSION["useruid"]; ?></a></li>
+		<li><a href="../includes/logout.inc.php" class="header-login-a">LOGOUT</a></li>
+		<?php 
+        }
+        else 
+        {
+        ?>
+        <li><a href="../register_form.php">SIGN UP</a></li>
+        <li><a href="../login_form.php" class="header-login-a">LOGIN</a></li>
+        <?php 
+        }
+        ?>
+        </ul>
+      </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+
+      <div class="text-box">
+        <h1>Welcome to the inquiry space</h1>
+        <p style="font-size: 20px;">Here you can manage your inquiries</p>
+      </div>
+    </section>
+
+
+    <section class="degree">
+        <div class="degree-box">
+          <a href="javascript:void(0)" class="hero-btn red-btn"  onclick="CreAInq()">Create an Inquiry</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="event" style="padding-top: 60px">
+
+        <div style="margin-bottom: 80px;">
+            <h4 style="margin-bottom: 30px">Pending Inquiries</h4>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Request</th>
+                    <th scope="col">Reference No.</th>
+<!--                    <th scope="col">Consultant</th>-->
+                    <th scope="col">Received</th>
+                    <th scope="col">Due</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                    if($getUserInquiriesPendingList){
+                        foreach ($getUserInquiriesPendingList as $index =>$value){
+                            ?>
+                            <tr>
+                                <th scope="row"><?php echo $index+1?></th>
+                                <td><a href="<?php echo './inquires_detail.php?id='.$value['id'] ?>">Inquiry <?php echo $value['reference_no']?></a></td>
+<!--                                <td>--><?php //echo $value['consultant']?><!--</td>-->
+                                <td><?php echo $value['received']?></td>
+                                <td><?php echo $value['due']?></td>
+                                <td><?php echo $value['status']?></td>
+                            </tr>
+
+                            <?php
+                        }
+                    }
+
+                ?>
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div>
+            <h4 style="margin-bottom: 30px">Closed Inquiries</h4>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Reference No.</th>
+                    <!--                    <th scope="col">Consultant</th>-->
+                    <th scope="col">Received</th>
+                    <th scope="col">Due</th>
+                    <th scope="col">Completed on</th>
+                    <th scope="col">Time Usage</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if($getUserInquiriesClosedList){
+                    foreach ($getUserInquiriesClosedList as $index =>$value){
+                        ?>
+                        <tr>
+                            <td><a href="<?php echo './inquires_detail.php?id='.$value['id'] ?>">Inquiry <?php echo $value['reference_no']?></a></td>
+                            <!--                                <td>--><?php //echo $value['consultant']?><!--</td>-->
+                            <td><?php echo $value['received']?></td>
+                            <td><?php echo $value['due']?></td>
+                            <td><?php echo $value['completed_on']?></td>
+                            <td><?php echo $value['timeu']?> mins</td>
+                            <td><?php echo $value['status']?></td>
+                        </tr>
+
+                        <?php
+                    }
+                }
+
+                ?>
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+    </script>
+
+</BODY>
+</HTML>
+
+
+
+
+
+<?php
+
+class inquiries extends Dbh {
+
+    /**
+     * 获取用户调查数量
+     * @param $uid
+     * @return array
+     */
+    public function getUserInquiriesNum($uid){
+        //$stmt = $this->connect()->prepare('SELECT COUNT(0) as num FROM inquiries WHERE users_id = ?');
+        $stmt = $this->connect()->prepare('SELECT COUNT(0) as num FROM inquiries');
+        //if (!$stmt->execute(array($uid))){
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $inquiries = $stmt->fetch(PDO::FETCH_ASSOC);
+        $num = $inquiries['num'];
+
+        return [200,"",$num];
+
+    }
+
+    /**
+     * 创建用户调查
+     * @param $uid
+     * @return array
+     */
+    public function createUserInquiries($uid){
+
+        $getUserInquiriesNum = $this->getUserInquiriesNum($uid);
+        if($getUserInquiriesNum[0] == 200){
+
+            $num= $getUserInquiriesNum[2]+1;
+            $time = time();
+            $stmt = $this->connect()->prepare('INSERT INTO inquiries (users_id,reference_no, createtime) VALUES (?,?, ?);');
+
+            if (!$stmt->execute(array($uid, $num, $time))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+
+            return [200,"createUserInquiries success"];
+
+        }else{
+            return [500,$getUserInquiriesNum[1]];
+        }
+
+    }
+
+    /**
+     * 获取用户调查进行中列表
+     * @param $uid
+     * @return array
+     */
+    public function getUserInquiriesPendingList($uid){
+        $stmt = $this->connect()->prepare("SELECT * FROM inquiries WHERE users_id = ? and (status is null or status = 'Opened')");
+
+        if (!$stmt->execute(array($uid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $pendingList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [200,"",$pendingList];
+
+    }
+
+    /**
+     * 通过id获取调查信息
+     * @param $id
+     * @return array
+     */
+    public function getInquirieInfoById($id){
+
+        $stmt = $this->connect()->prepare("SELECT * FROM inquiries WHERE id = ? ");
+
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $getInquirieInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$getInquirieInfo];
+
+    }
+
+    /**
+     * 通过id获取用户信息
+     * @param $id
+     * @return array
+     */
+    public function getUserInfoById($id){
+
+        $stmt = $this->connect()->prepare("SELECT * FROM users WHERE users_id = ? ");
+
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $getUserInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$getUserInfo];
+
+    }
+
+    /**
+     * 通过id更新调查信息
+     * @param $arr
+     * @return array
+     */
+    public function saveInquirieInfoById($arr){
+
+        $id = $arr['id'];
+        if(empty($id)){
+            return [500,"params error"];
+        }
+
+
+        $received = $arr['received'];
+        $due = $arr['due'];
+        $status ='Opened';
+        $question_title = $arr['question_title'];
+        $question_text = $arr['question_text'];
+        $comments_title = $arr['comments_title'];
+        $comments_text = $arr['comments_text'];
+        //$actions_title = $arr['actions_title'];
+        //$actions_text = $arr['actions_text'];
+        $files_title = $arr['files_title'];
+        $files_text = $arr['files_text'];
+
+        if($arr['actions']){
+            $actions_title = json_encode($arr['actions']);
+        }else{
+            $actions_title = json_encode([]);
+        }
+
+        $actions_text = $arr['actions_text'];
+        $submit_show_actions_text = $arr['submit_show_actions_text'];
+        if($submit_show_actions_text){
+            $submit_show_actions_text = str_replace(',', "", $submit_show_actions_text);
+        }else{
+            $submit_show_actions_text = "";
+        }
+
+        $cname = $arr['cname'];
+        $ctel = $arr['ctel'];
+        $cemail = $arr['cemail'];
+        $cstaffnum = $arr['cstaffnum'];
+        $consultant = ["cname"=>$cname,"ctel"=>$ctel,"cemail"=>$cemail,"cstaffnum"=>$cstaffnum];
+        $consultant_json = json_encode($consultant,320);
+
+        $createtime = time();
+        $id = $arr['id'];
+
+        $stmt = $this->connect()->prepare("UPDATE inquiries 
+SET received= ? ,due=?,status=?,question_title=?,question_text=?,
+comments_title=?,comments_text=?,actions_title=?,actions_text=?,
+files_title=?,files_text=?,createtime=? ,
+consultant=?,submit_show_actions_text=? 
+WHERE id = ? ");
+        if (!$stmt->execute(array($received,$due,$status,$question_title,$question_text,$comments_title,$comments_text,$actions_title,$actions_text,$files_title,$files_text,$createtime,$consultant_json,$submit_show_actions_text,$id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $saveInquirieInfoById = @$stmt->execute();
+
+        return [200,"",$saveInquirieInfoById];
+    }
+
+    public function getUserInquiriesClosedList($uid){
+
+        $handleInquiriesClosed = $this->handleInquiriesClosed($uid);
+
+        $stmt = $this->connect()->prepare("SELECT * FROM inquiries WHERE users_id = ? and  status = 'Closed'");
+
+        if (!$stmt->execute(array($uid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $closedList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [200,"",$closedList];
+    }
+
+    public function handleInquiriesClosed($uid){
+
+        $date = date("Y-m-d H:i");
+
+        $stmt = $this->connect()->prepare("UPDATE inquiries SET status='Closed',completed_on=due,timeu=TIMESTAMPDIFF(MINUTE, received, completed_on) WHERE users_id = ? AND due < ?");
+
+        if (!$stmt->execute(array($uid,$date))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $handleInquiriesClosed = @$stmt->execute();
+
+        return [200,"",$handleInquiriesClosed];
+    }
+
+    public function completedUserInquiries($id){
+        $date = date("Y-m-d H:i");
+
+        $stmt = $this->connect()->prepare("UPDATE inquiries SET status='Closed',completed_on = ?,timeu=TIMESTAMPDIFF(MINUTE, received, completed_on) WHERE id = ?");
+
+        if (!$stmt->execute(array($date,$id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $completedUserInquiries = @$stmt->execute(PDO::FETCH_ASSOC);
+
+        return [200,"",$completedUserInquiries];
+    }
+
+    /**
+     * 通过Inquirieid更新action_sub
+     * @param $arr
+     * @return array
+     */
+    public function saveActionSubInfoByInquirieid($arr){
+
+        $id = $arr['id'];
+        if(empty($id)){
+            return [500,"params error"];
+        }
+
+        $title = $arr['action_sub_title'];
+        $text = $arr['action_sub_text'];
+
+        $action_sub_info = $this->action_sub_info($id,$title);
+        if($action_sub_info[0] == 200 && !empty($action_sub_info[2])){
+            $action_sub_info_db = $action_sub_info[2];
+        }else{
+            $action_sub_info_db = null;
+        }
+
+        if($action_sub_info_db){
+            //修改
+            $stmt = $this->connect()->prepare("UPDATE action_sub_info 
+SET text=?
+WHERE inquiries_id = ? and title = ? ");
+            if (!$stmt->execute(array($text,$id,$title))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+
+            @$stmt->execute();
+
+        }else{
+            //新增
+            $stmt = $this->connect()->prepare('INSERT INTO action_sub_info (inquiries_id,title, text) VALUES (?,?, ?);');
+
+            if (!$stmt->execute(array($id, $title, $text))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+
+        }
+
+        return [200,""];
+    }
+
+    public function action_sub_info($inquiries_id,$title){
+        $action_sub_info = $this->connect()->prepare("SELECT * FROM action_sub_info WHERE inquiries_id = ? and  title = ?");
+        if (!$action_sub_info->execute(array($inquiries_id,$title))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $action_sub_info_db = $action_sub_info->fetch(PDO::FETCH_ASSOC);
+        return [200,"",$action_sub_info_db];
+    }
+
+}
+?>
+
+                                                                                                
