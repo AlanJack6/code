@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <!----网站初始比例---->
+    <title>Academics-UM</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;1,400;1,500&family=Roboto:ital,wght@0,500;0,900;1,300&family=Young+Serif&display=swap" rel="stylesheet"><!----谷歌文字体---->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!----符号---->
+  </head>
+  <body>
+    <section class="sub-header">
+      <nav>
+        <a href="index.html"><img src="../images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="about.html">About UM</a></li>
+            <li><a href="academics.html">Academics</a></li>
+            <li><a href="research.html">Researh</a></li>
+            <li><a href="colleges.html">Colleges</a></li>
+            <li><a href="study.html">Study@UM</a></li>
+            <li><a href="campus.html">Campus</a></li>
+            <li><a href="news.html">NEWS</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+          </ul>
+        </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+      <div class="academics">
+      <h1 style="font-size:90px;margin-top: 40px;">Academics</h1>
+      <br>
+      <p>We are fully committed to excellence in teaching, research, and service.<p>
+	  </div>
+    </section>
+    
+    
+    <div class="aca-right">
+      <h3>Faculties & Institutes</h3>
+      <ul>
+      <li><a href="../faculty/FST.html">Faculty of Science and Technology</a></li>
+      <li><a href="../faculty/FBA.html">Faculty of Business Administration</a></li>
+      <li><a href="../faculty/FED.html">Faculty of Education</a></li>
+      <li><a href="../faculty/FHS.html">Faculty of Health Sciences</a></li>
+      <li><a href="../faculty/FLL.html">Faculty of Law</a></li>
+      <li><a href="../faculty/FAH.html">Faculty of Arts and Humanities</a></li>
+      <li><a href="../faculty/FSS.html">Faculty of Social Sciences</a></li>
+      <li><a href="../faculty/HC.html">Honours College</a></li>
+      <ul>
+  </div>
+    
+<!-----FST------>
+<section class="fst">
+  <h2 style="font-size: 32px; color: black;">Faculty of Science and Technology</h2>
+  <div class="row">  
+  <div class="fst-image">
+     <a href="../faculty/FST.html"><img src="../images/Banner_FST-01-1200x494.jpg"></a>
+  </div>
+   <div class="ACA-box">
+      <a href="../fst/cee.html" class="hero-btn red-btn">Department of Civil and Environmental Engineering</a>
+      <a href="../fst/cis.html" class="hero-btn red-btn">Department of Computer and Information Science</a>
+      <a href="../fst/ece.html" class="hero-btn red-btn">Department of Electrical and Computer Engineering</a>
+      <a href="../fst/eme.html" class="hero-btn red-btn">Department of Electromechanical Engineering</a>
+      <a href="../fst/mat.html" class="hero-btn red-btn">Department of Mathematics</a>
+      <a href="../fst/ose.html" class="hero-btn red-btn">Department of Ocean Science and Technology</a>
+      <a href="../fst/dpc.html" class="hero-btn red-btn">Department of Physics and Chemistry</a>
+      <a href="" class="hero-btn red-btn">Centre for Applied Mathematics</a>
+      <a href="" class="hero-btn red-btn">Centre for Engineering Research and Testing</a>
+      <a href="" class="hero-btn red-btn">Centre for Regional Oceans</a>
+      <a href="" class="hero-btn red-btn">Centre for Science and Engineering Promotion</a>
+    </div>
+</section>
+
+
+<!-----FBA------>
+<section class="fba">
+    <h2 style="font-size: 32px; color: black;">Faculty of Business Administration</h2>
+  <div class="row">
+  <div class="fba-image">
+    <a href="../faculty/FBA.html"><img src="../images/FBA_Banner-01-1200x494.jpg"></a>
+  </div>
+  <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Department of Accounting and Information<br>Management</a>
+      <a href="" class="hero-btn red-btn">Department of Finance and Business<br>Economics</a>
+      <a href="" class="hero-btn red-btn">Department of Management and Marketing</a>
+      <a href="" class="hero-btn red-btn">Department of lntegrated Resort and<br>Tourism Management</a>
+      <a href="" class="hero-btn red-btn">Institute for the Study of Commercial Gaming</a>
+      <a href="" class="hero-btn red-btn">Business Research and Training Center</a>
+      <a href="" class="hero-btn red-btn">Centre for Tourism and Integrated Resort Studies</a>
+    </div>
+</section>
+
+
+
+<!-----FED------>
+<section class="fed">
+    <h2 style="font-size: 32px; color: black;">Faculty of Education</h2>
+  <div class="row">
+  <div class="fed-image">
+    <a href="../faculty/FED.html"><img src="../images/FED_banner-01-scaled.jpg"></a>
+  </div>
+     <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Educational Research Centre</a>
+      <a href="" class="hero-btn red-btn">Educational Testing and Assessment Research<br>Centre</a>
+      <a href="" class="hero-btn red-btn">Centre for Information and Communication<br>Technology in Education</a>
+      <a href="" class="hero-btn red-btn">Centre for Early Childhood Education and<br>Child Development</a>
+    </div>
+</section>
+
+
+
+<!-----FHS------>
+<section class="fhs">
+    <h2 style="font-size: 32px; color: black;">Faculty of Health Sciences</h2>
+  <div class="row">
+  <div class="fhs-image">
+    <a href="../faculty/FHS.html"><img src="../images/FHS_banner-01-scaled.jpg"></a>
+  </div>
+    <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Department of Biomedical Sciences</a>
+      <a href="" class="hero-btn red-btn">Department of Pharmaceutical Sciences</a>
+      <a href="" class="hero-btn red-btn">Department of Public Health and<br>Medicinal Administration</a>
+      <a href="" class="hero-btn red-btn">Ministry of Education Frontiers Science Center for<br>Precision Oncology,University of Macau</a>
+      <a href="" class="hero-btn red-btn">Centre for Precision Medicine<br>Research and Training</a>
+      <a href="" class="hero-btn red-btn">Centre for Reproduction, Development and Aging</a>
+      <a href="" class="hero-btn red-btn">Institute of Translational Medicin</a>
+      <a href="" class="hero-btn red-btn">Cancer Centre</a>
+    </div>
+</section>
+
+
+
+<!-----FLL------>
+
+<section class="fll">
+    <h2 style="font-size: 32px; color: black;">Faculty of Law</h2>
+  <div class="row">
+  <div class="fll-image">
+    <a href="../faculty/FLL.html"><img src="../images/FLL_banner-01-1200x494.jpg"></a>
+  </div>
+      <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Department of Macao Legal Studies</a>
+      <a href="" class="hero-btn red-btn">Department of Global Legal Studies</a>
+      <a href="" class="hero-btn red-btn">Centre for Law Studies</a>
+      <a href="" class="hero-btn red-btn">Centre for Constitutional Law and Basic Law Studies</a>
+      <a href="" class="hero-btn red-btn">Institute for Advanced Legal Studies</a>
+    </div>
+</section>
+
+
+<!-----FAH------>
+<section class="fah">
+    <h2 style="font-size: 32px; color: black;">Faculty of Arts and Humanities</h2>
+  <div class="row">
+  <div class="fah-image">
+    <a href="../faculty/FAH.html"><img src="../images/FAH_banner-01-scaled.jpg"></a>
+  </div>
+      <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Department of Arts and Design</a>
+      <a href="" class="hero-btn red-btn">Department of Chinese Language and Literature</a>
+      <a href="" class="hero-btn red-btn">Department of English</a>
+      <a href="" class="hero-btn red-btn">Department of History</a>
+      <a href="" class="hero-btn red-btn">Department of Portuguese</a>
+      <a href="" class="hero-btn red-btn">Department of Philosophy and Religious Studies</a>
+      <a href="" class="hero-btn red-btn">Centre for Japanese Studies</a>
+      <a href="" class="hero-btn red-btn">English Language Centre</a>
+      <a href="" class="hero-btn red-btn">Centre for Linguistics</a>
+      <a href="" class="hero-btn red-btn">Chinese-Portuguese Bilingual Teaching and<br>Training Centre</a>
+      <a href="" class="hero-btn red-btn">Centre for Studies of Translation, Interpreting<br>and Cognition</a>
+      <a href="" class="hero-btn red-btn">Confucius Institute</a>
+      <a href="" class="hero-btn red-btn">Research Centre for Humanities in South China</a>
+      <a href="" class="hero-btn red-btn">Research Centre for Luso-Asian Studies</a>
+    </div>
+</section>
+
+
+
+<!-----FSS------>
+
+<section class="fss">
+    <h2 style="font-size: 32px; color: black;">Faculty of Social Sciences</h2>
+  <div class="row">
+  <div class="fss-image">
+    <a href="../faculty/FSS.html"><img src="../images/Banner_FSS-01-1200x494.jpg"></a>
+  </div>
+        <div class="ACA-box">
+      <a href="" class="hero-btn red-btn">Department of Communication</a>
+      <a href="" class="hero-btn red-btn">Department of Economics</a>
+      <a href="" class="hero-btn red-btn">Department of Government and Public Administration</a>
+      <a href="" class="hero-btn red-btn">Department of Psychology</a>
+      <a href="" class="hero-btn red-btn">Department of Sociology</a>
+      <a href="" class="hero-btn red-btn">Centre for Arts and Design</a>
+      <a href="" class="hero-btn red-btn">Centre for the Guangdong-Hong Kong-Macao<br>Greater Bay Area Studies</a>
+      <a href="" class="hero-btn red-btn">Institute of Global and Public Affairs</a>
+      <a href="" class="hero-btn red-btn">Russian Centre</a>
+    </div>
+</section>
+
+
+<!-----HC------>
+<section class="hc">
+    <h2 style="font-size: 32px; color: black;">Honours College</h2>
+  <div class="row">
+  <div class="hc-image">
+    <a href="../faculty/HC.html"><img src="../images/academics-hb-1-1.jpg"></a>
+ 
+</section>
+
+
+
+
+
+
+
+<!-----contact------>
+<div class="board">
+    <div class="section">
+      <img src="../images/umac_footer_logo.webp">
+        <div>
+          <span>
+            <i class="fa fa-home"><h5>Address:<br>University of Macau <br>Avenida da UniversidadeTaipa, <br>Macau, China</h5></i>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h5>Phone:<br>+853 8822 8833</h5></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h5>Fax:<br>+853 8822 8822</h5></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h5>info@um.edu.mo</h5></i>
+        <span>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-globe"><h5>www.um.edu.mo</h5></i>
+        <span>
+        </span>
+      </div>
+    </div>
+    <div class="section">
+        <h2>Faculties, Colleges and Units</h2>
+        <a href="">Faculties & Institutes</a><a href=""> | Residential Colleges</a><a href=""> | Other Academic Units</a><a href=""> | Academic Support & Administrative Units</a>
+        <h2>About UM</h2>
+        <a href="">UM Introduction</a><a href=""> | International Reputation</a><a href=""> | Societal Support</a><a href=""> | History</a><a href=""> | Facts & Figures</a>
+        <h2>Information for</h2>
+        <a href="">UM Students</a><a href=""> | Staff</a><a href=""> | Alumni</a><a href=""> | Media</a><a href=""> | Vistors</a><a href=""> | Donors</a><a href=""> | Partners</a>
+        <h2>News & Events</h2>
+        <a href="">News</a><a href=""> | Events</a><a href=""> | Campus Photos</a><a href=""> | UM in Videos</a>
+        <h2>Quick Links</h2>
+        <a href="">Map</a><a href=""> | Library</a><a href=""> | University Almanac</a><a href=""> | procurement Notice</a><a href=""> | Privacy Policy</a><a href=""> | Sitemap</a>
+    </div>
+    <div class="section1">
+        <a href="" class="hero-btn">Applying</a><br>
+        <a href="" class="hero-btn">Visiting</a><br>
+        <a href="" class="hero-btn">Giving</a><br>
+        <a href="" class="hero-btn">Careers</a><br>
+        <a href="" class="hero-btn">Contacts</a>
+
+    </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+
+
+
+
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+      var acaRight = document.querySelector('.aca-right');
+      acaRight.style.display = 'none';
+      var pageHeight = document.documentElement.scrollHeight;
+  	  var hidePosition = pageHeight * 0.75;
+  	  window.addEventListener('scroll', function() {
+			var scrollY = window.scrollY || window.pageYOffset;
+			if (scrollY > 0) {
+				acaRight.style.display = 'block';}
+			 var scrollY = window.scrollY || window.pageYOffset;
+			 if (scrollY >= hidePosition) {
+				 acaRight.style.display = 'none';
+    } else {
+		acaRight.style.display = 'block';
+    }
+  });
+
+    </script>
+  </body>
+</html>
