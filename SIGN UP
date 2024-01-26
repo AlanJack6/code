@@ -1,0 +1,211 @@
+<?php
+
+if(isset($_POST["submit"]))
+{
+    $uid=$_POST["uid"];
+    $pwd=$_POST["pwd"];
+    $pwdRepeat=$_POST["pwdrepeat"];
+    $email=$_POST["email"];
+    $name=$_POST["name"];
+    $number=$_POST["number"];
+    $tel=$_POST["tel"];
+    
+    
+include "../classes/dbh.classes.php";
+include "../classes/signup.classes.php";
+include "../classes/signup-contr.classes.php";
+$signup = new SignupContr($uid,$pwd, $pwdRepeat, $email, $name, $number, $tel);
+
+$signup->signupUser();
+
+header("location: ../login_form.php?error=none");
+
+}
+?>
+
+
+<?php
+
+class Signup extends Dbh {
+    
+    protected function setUser($uid, $pwd, $email, $name, $number, $tel){
+        $stmt = $this->connect()->prepare('INSERT INTO users (users_uid, users_pwd, users_email, users_name, users_number, users_tel) VALUES (?, ?, ?, ?, ?, ?);');
+        
+        $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
+        
+        
+        if (!$stmt->execute(array($uid, $hashedPwd, $email, $name, $number, $tel))){
+            $stmt = null;
+            header("location: ../register_form.php?error=stmtfailed");
+            exit();
+        }
+        
+        $stmt = null;
+        
+    }
+    
+    
+    protected function checkUser($uid, $email){
+        $stmt = $this->connect()->prepare('SELECT users_uid FROM users WHERE users_uid = ? OR users_email = ?;');
+        
+        if (!$stmt->execute(array($uid, $email))){
+            $stmt = null;
+            header("location: ../register_form.php?error=stmtfailed");
+            exit();
+        }
+        
+        $resultCheck;
+        if ($stmt->rowCount() > 0){
+            $resultCheck = false;
+        }
+        else {
+            $resultCheck = true;
+        }
+        return $resultCheck;
+    }
+
+    public function checkUserExist($uid){
+
+        $stmt = $this->connect()->prepare('SELECT * FROM users WHERE users_uid = ?');
+        if (!$stmt->execute(array($uid))){
+            $stmt = null;
+            header("location: ../register_form.php?error=stmtfailed");
+            exit();
+        }
+
+
+        if ($stmt->rowCount() > 0){
+            $resultCheck = true;
+        }
+        else {
+            $resultCheck = false;
+        }
+        return $resultCheck;
+
+
+    }
+    
+}
+?>
+
+
+<?php
+ini_set('display_errors',1);
+class SignupContr extends Signup{
+    private $uid;
+    private $pwd;
+    private $pwdRepeat;
+    private $email;
+    private $name;
+    private $number;
+    private $tel;
+    
+    public function __construct($uid, $pwd, $pwdRepeat, $email, $name, $number, $tel){
+        $this->uid = $uid;
+        $this->pwd = $pwd;
+        $this->pwdRepeat = $pwdRepeat;
+        $this->email = $email;
+        $this->name = $name;
+        $this->number = $number;
+        $this->tel = $tel;
+    }
+    
+    public  function signupUser(){
+        if ($this->emptyInput() == false){
+            header("location: ../register_form.php?error=emptyinput");
+            exit();
+        }
+        if ($this->invalidUid() == false){
+            header("location: ../register_form.php?error=username");
+            exit();
+        }
+        if ($this->invalidEmail() == false){
+            header("location: ../register_form.php?error=email");
+            exit();
+        }
+        if ($this->pwdMatch() == false){
+            header("location: ../register_form.php?error=passwordmatch");
+            exit();
+        }
+        if ($this->uidTakenCheck() == false){
+            //header("location: ../register_form.php?error=useroremailtaken");
+            //exit();
+        }
+
+        $checkUserExist = $this->checkUserExist($this->uid);
+        if($checkUserExist){
+            $errorMessage = "Username already exists. Please choose a different username.";
+            echo "<script>alert('$errorMessage');</script>";
+            echo "<script>window.location.href = '../register_form.php';</script>";
+            exit();
+        }
+        
+        $this->setUser($this->uid, $this->pwd, $this->email, $this->name, $this->number, $this->tel);
+        
+    }
+    
+    private function emptyInput(){
+        $result;
+        if(empty($this->uid) or empty($this->pwd) or empty($this->pwdRepeat) or empty($this->email)){
+            $result = false;
+        }
+        else {
+            $result = true;
+        }
+        return  $result;
+    }
+    
+    private function invalidUid(){
+        $result;
+        if (!preg_match("/^[a-zA-Z0-9]*$/",$this->uid)){
+            $result = false;
+        }
+        else {
+            $result = true;
+        }
+        return $result;
+    }
+    
+    private function invalidEmail(){
+        $result;
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL))
+        {
+            $result = false;
+        }
+        else {
+            $result = true;
+        }
+        return $result;
+    }
+    
+    private function pwdMatch(){
+        $result;
+        if ($this->pwd !== $this->pwdRepeat)
+        {
+            $result = false;
+        }
+        else {
+            $result = true;
+        }
+        return $result;
+    }
+
+    
+    private function uidTakenCheck(){
+        $result;
+        if (!$this->checkUser($this->uid, $this->email))
+        {
+            $result = false;
+        }
+        else {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+}
+
+
+
+?>
