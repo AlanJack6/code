@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例---->
+    <title>Department of Computer and Information Science</title>
+    <link rel="stylesheet" href="../css/faculty.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;1,400;1,500&family=Roboto:ital,wght@0,500;0,900;1,300&family=Young+Serif&display=swap" rel="stylesheet"><!----谷歌文字体---->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"><!---符号---->
+  </head>
+  <body>
+    <section class="cis-header">
+      <nav>
+ 		<img src="../images/CIS-Logo-Chinese (1).png" class="enlarge-image">
+        <div class="cis-links" id="cislinks">
+  <i class="fa fa-times" onclick="hideMenu()"></i>
+  <ul>
+    <li><a href="../faculty/FST.html">FST HOME</a></li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">About</a>
+      <div class="dropdown-content">
+        <a href="cis-about.html">About CIS</a>
+        <a href="cis-facts.html">Fats</a>
+        <a href="cis-job.html">Job Openings</a>
+        <a href="cis-contact.html">Contact Us</a>
+      </div>
+    </li>
+     <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Real</a>
+      <div class="dropdown-content">
+        <a href="http://localhost/University%20of%20Macau/super/real.php">Real</a>
+        <a href="http://localhost/University%20of%20Macau/super/super.php">Super</a>
+        <a href="http://localhost/University%20of%20Macau/super/inquiry.php">Inquiry</a>
+        <a href="http://localhost/University%20of%20Macau/super/course.php">Courses</a>
+        <a href="http://localhost/University%20of%20Macau/super/resources.php">Resources</a>
+        <a href="http://localhost/University%20of%20Macau/super/communication.php">Communication</a>
+        <a href="http://localhost/University%20of%20Macau/super/assessment.php">Assessment</a>
+      </div>
+    </li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">People</a>
+      <div class="dropdown-content">
+        <a href="cis-staff.html">Academic Staff</a>
+        <a href="cis-staff2.html">Administrative Staff</a>
+      </div>
+    </li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Research</a>
+      <div class="dropdown-content">
+        <a href="cis-research.html">Research Labs&Groups</a>
+        <a href="cis-fac.html">Facilities</a>
+      </div>
+    </li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Academics</a>
+      <div class="dropdown-content">
+        <a href="cis-un.html">Undergraduate</a>
+        <a href="cis-po.html">Postgraduate</a>
+        <a href="cis-ac.html">Accreditation</a>
+      </div>
+    </li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Admissions</a>
+      <div class="dropdown-content">
+        <a href="cis-under.html">Undegraduate</a>
+        <a href="cis-post.html">Postgraduate</a>
+      </div>
+    </li>
+    <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">News&Event</a>
+      <div class="dropdown-content">
+        <a href="cis.html">News</a>
+        <a href="cis.html">Events</a>
+      </div>
+    </li>
+  </ul>
+</div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+    </section>
+
+<!-------About-------->
+
+<section class="cis">
+  <div class="row2">
+    <div class="about-col">
+      <h1>Computer and Information Science</h1>
+      <p>Founded in 1990, the Department of Computer and Information Science provides quality<br>
+      undergraduate and postgraduate programmes, which cover the main aspects of modern computer<br>
+      science and related technologies. The Department has equipped fifteen laboratories with<br>
+      advanced facilities and rich software tools for its students and academic staff to develop their<br>
+      course projects, final year projects and R&D projects.</p>
+      <a href="cis-about.html" class="hero-btn red-btn">More about CIS</a>
+    </div>
+    <div class="about-col">
+      <img src="../images/cis.png">
+    </div>
+  </div>
+</section>
+
+
+<!-----News------>
+
+<section class="Nes">
+  <h1>NEWS</h1>
+  <div class="row">
+    <div class="nes-col">
+      <img src="../images/cisn1.jpg">
+      <h3>The martial arts journey of Angela Wong, Nanquan champion in the World University Games</h3>
+      <p>2023-09-19<br><br>‘Only through enduring hardships can one achieve more,’ This is the motto of Angela Wong, a fourth-year student in the Department of Computer and Information Science ...</p>
+    </div>
+    <div class="nes-col">
+      <img src="../images/cisn2.jpg">
+      <h3>UM master's student wins first prize for intelligent poetry generation system</h3>
+      <p>2023-08-23<br><br>Ma Jingkun, a master's student in the Faculty of Science and Technology (FST) at the University of Macau (UM), won a first prize...</p>
+    </div>
+    <div class="nes-col">
+      <img src="../images/cisn3.jpg">
+      <h3>The 4th International Joint Conference on Theoretical Computing was successfully held at UM</h3>
+      <p>2023-08-21<br><br>The 4th International Joint Conference on Theoretical Computing was successfully held at the University of Macau ... </p>
+    <a href="" class="hero-btn red-btn">READ MORE</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-------EVENT-------->
+<section class="event">
+  <h1>Our Event</h1>
+  <div class="row">
+    <div class="event-col">
+      <img src="../images/cise1.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>The framework of Hammer (CAFE) credit rating for capital markets in China with international credit rating standards</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/cise2.png">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>2023″工行杯”全國大學生金融科技創新大賽之第三屆澳門大學生金融科技創新大賽現開放報名 (截止:2023年10月下旬)</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/cise3.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Low-bit Adaptive Numerical Data Type for Large Language Models<br>大模型低精度自適應數值類型研究</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/cise4.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Multimodal Medical Image Processing and Its Applications</h3></a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="event-col">
+      <img src="../images/cise5.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Hyperspectral Computer Vision and Its Applications</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/event6.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Grand Prix Metaverse Autonomous Driving Challenge and Workshop 2023</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/event7.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>微服務架構下的邊雲協同計算</h3></a>
+      </div>
+    </div>
+    <div class="event-col">
+      <img src="../images/cise8.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Learned Indexes for Multi-dimensional and High-dimensional Data</h3></a>
+      </div>
+    </div>
+    <a href="" class="hero-btn red-btn">MORE EVENT</a>
+   </div>
+</section>
+
+
+
+
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+ 
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+           
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+      function hideMenu() {
+  var dropdowns = document.getElementsByClassName("dropdown-content");
+  for (var i = 0; i < dropdowns.length; i++) {
+    var openDropdown = dropdowns[i];
+    if (openDropdown.style.display === "block") {
+      openDropdown.style.display = "none";
+    }
+  }
+}
+
+const cisHeader = document.querySelector('.cis-header');
+const images = ['image1', 'image2', 'image3', 'image4', 'image5'];
+let currentIndex = 0;
+
+function changeImage() {
+  cisHeader.classList.remove(images[currentIndex]);
+  currentIndex = (currentIndex + 1) % images.length;
+  cisHeader.classList.add(images[currentIndex]);
+}
+changeImage();
+setInterval(changeImage, 3000);
+
+
+    </script>
+  </body>
+</html>
