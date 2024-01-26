@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例---->
+    <title>University of Macau</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;1,400;1,500&family=Roboto:ital,wght@0,500;0,900;1,300&family=Young+Serif&display=swap" rel="stylesheet"><!----谷歌文字体---->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"><!---符号---->
+  </head>
+  <body>
+    <section class="header">
+      <nav>
+        <a href="index.html"><img src="../images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="about.html">About UM</a></li>
+            <li><a href="academics.html">Academics</a></li>
+            <li><a href="research.html">Researh</a></li>
+            <li><a href="colleges.html">Colleges</a></li>
+            <li><a href="study.html">Study@UM</a></li>
+            <li><a href="campus.html">Campus</a></li>
+            <li><a href="news.html">NEWS</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+          </ul>
+        </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+
+      <div class="text-box">
+        <h1>University of Macau</h1>
+        <p>The University of Macau (UM) is a comprehensive higher education institution located in Macau, offering Bachelor's, Master's and Doctoral degree programmes in a wide range of fields. <br>Equipped with state-of-the-art teaching facilities and rich academic resources, the University is committed to nurturing outstanding human resources with international outlook and innovative capabilities to contribute to social and economic development.</p>
+        <a href="" class="hero-btn">Visit Us To Know More</a>
+      </div>
+    </section>
+
+
+<!----- Course ----->
+
+
+
+
+<!-----campus------>
+
+<section class="campus">
+  <h1>Our Important Academics</h1>
+  <div class="row">
+    <div class="campus-col">
+      <img src="../images/FAH_banner-01-scaled.jpg">
+      <div class="layer">
+        <a href="../faculty/FAH.html"><h3>Faculty of Arts and Humanities</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/FBA_Banner-01-1200x494.jpg">
+      <div class="layer">
+        <a href="../faculty/FBA.html"><h3>Faculty of Business Administration</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/FED_banner-01-scaled.jpg">
+      <div class="layer">
+        <a href="../faculty/FED.html"><h3>Faculty of Education</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/FHS_banner-01-scaled.jpg">
+      <div class="layer">
+        <a href="../faculty/FHS.html"><h3>Faculty of Health Sciences</h3></a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="campus-col">
+      <img src="../images/FLL_banner-01-1200x494.jpg">
+      <div class="layer">
+        <a href="../faculty/FLL.html"><h3>Faculty of Law</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/Banner_FST-01-1200x494.jpg">
+      <div class="layer">
+        <a href="../faculty/FST.html"><h3>Faculty of Science and Technology</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/Banner_FSS-01-1200x494.jpg">
+      <div class="layer">
+        <a href="../faculty/FSS.html"><h3>Faculty of Social Sciences</h3></a>
+      </div>
+    </div>
+    <div class="campus-col">
+      <img src="../images/academics-hb-1-1.jpg">
+      <div class="layer">
+        <a href="../faculty/HC.html"><h3>Honours College</h3></a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-----FACILITIES------>
+<section class="facilities">
+  <h1>Our Facilities</h1>
+  <div class="row">
+    <div class="facilities-col">
+      <img src="../images/campusphoto-2-460x295.jpg">
+      <h3>Library</h3>
+      <p>The University of Macau Wu Yee Sun Library is a large seven-storey building with a collection of more than 12 million volumes/items, and provides a quality learning environment and facilities for students to enjoy reading and learning.</p>
+    </div>
+    <div class="facilities-col">
+      <img src="../images/campusphoto-27-460x295.jpg">
+      <h3>Administration Centre</h3>
+      <p>The Administration Building of the University of Macau is a fully functional building providing office and administrative services. This modern building provides a comfortable working environment for staff and facilitates smooth communication and collaboration among various departments within the University to support the day-to-day operation and management of the University.</p>
+    </div>
+    <div class="facilities-col">
+      <img src="../images/campusphoto-15-460x295.jpg">
+      <h3>Science Research Building</h3>
+      <p>The Research Building of the University of Macau is a modern building providing state-of-the-art research facilities and laboratories to provide students and teachers with a quality scientific research environment that promotes innovation and academic development.</p>
+    </div>
+  </div>
+</section>
+
+<!-------testimonials-------->
+<section class="testiomials">
+	<h1>What Our student says</h1>
+	<p>Comments from students.</p>
+	
+	<div class="row">
+	   <div class="testimonial-col">
+		   <img src="../images/student1.jpg">
+		   <div>
+			   <p>I love UM not only its new and modern campus but also it high-level and professional professors. 
+				   they treat me nice and patience.when i meet difficult in life, 
+				   they also act as a guide or friends to give me suggestions.</p>
+			   <h3>Chan Zeyang</h3>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star-o"></i>
+		   </div>
+	   </div>
+	   <div class="testimonial-col">
+		   <img src="../images/student2.jpg">
+		   <div>
+			   <p>First, I am local student and studied in university of Macau. 
+				   So I am so glad to introduce and can make a good information to yours. 
+				   In recent years, more and more people notice university of Macau; 
+				   the reason is the university is a famous and coming an international school. 
+				   From my opinion, I think UM was so convenience and had a completely equipment for students to use.</p>
+			   <h3>Miss Lai</h3>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star-half-o"></i>
+		   </div>
+	   </div>
+	   <div class="testimonial-col">
+		   <img src="../images/student3.jpg">
+		   <div>
+			   <p>I am a university student in Macau which major in business administration and this is my University, 
+				   this university have a very large campus, which have near all the things we need there,
+				    in my first year of study here, I can have fun and also playing together with my friends, 
+				    it provides many resource for students to develop in their own interest, such as gym, piano, 
+				    choir, that is why I love this university.</p>
+			   <h3>Kevin C</h3>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+			   <i class="fa fa-star"></i>
+		   </div>
+	   </div>
+	</div>
+	
+</section>
+
+<!-------Call To Action-------->
+
+<section class="cta">
+  <h1>Get the Latest UM News</h1>
+  <input type="text" id="searchbar" name="searchbar" placeholder="Search here..."> <button type="submit" id="searchbtn" name="searchbtn" style="width: 200px; height: 40px;">Search</button>
+</section>
+
+<!-----contact------>
+<div class="board">
+    <div class="section">
+      <img src="../images/umac_footer_logo.webp">
+        <div>
+          <span>
+            <i class="fa fa-home"><h5>Address:<br>University of Macau <br>Avenida da UniversidadeTaipa, <br>Macau, China</h5></i>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h5>Phone:<br>+853 8822 8833</h5></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h5>Fax:<br>+853 8822 8822</h5></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h5>info@um.edu.mo</h5></i>
+        <span>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-globe"><h5>www.um.edu.mo</h5></i>
+        <span>
+        </span>
+      </div>
+    </div>
+    <div class="section">
+        <h2>Faculties, Colleges and Units</h2>
+        <a href="">Faculties & Institutes</a><a href=""> | Residential Colleges</a><a href=""> | Other Academic Units</a><a href=""> | Academic Support & Administrative Units</a>
+        <h2>About UM</h2>
+        <a href="">UM Introduction</a><a href=""> | International Reputation</a><a href=""> | Societal Support</a><a href=""> | History</a><a href=""> | Facts & Figures</a>
+        <h2>Information for</h2>
+        <a href="">UM Students</a><a href=""> | Staff</a><a href=""> | Alumni</a><a href=""> | Media</a><a href=""> | Vistors</a><a href=""> | Donors</a><a href=""> | Partners</a>
+        <h2>News & Events</h2>
+        <a href="">News</a><a href=""> | Events</a><a href=""> | Campus Photos</a><a href=""> | UM in Videos</a>
+        <h2>Quick Links</h2>
+        <a href="">Map</a><a href=""> | Library</a><a href=""> | University Almanac</a><a href=""> | procurement Notice</a><a href=""> | Privacy Policy</a><a href=""> | Sitemap</a>
+    </div>
+    <div class="section1">
+        <a href="" class="hero-btn">Applying</a><br>
+        <a href="" class="hero-btn">Visiting</a><br>
+        <a href="" class="hero-btn">Giving</a><br>
+        <a href="" class="hero-btn">Careers</a><br>
+        <a href="" class="hero-btn">Contacts</a>
+
+    </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+
+
+
+
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+    </script>
+  </body>
+</html>
