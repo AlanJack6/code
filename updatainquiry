@@ -1,0 +1,508 @@
+<?php
+include "../classes/dbh.classes.php";
+include "../classes/inquiries.classes.php";
+
+session_start();
+@$userid = $_SESSION["userid"];
+if(empty($userid)){
+    header("location: ../login_form.php");exit;
+}
+
+$id = "";
+if($_POST){
+    $inquiries = new inquiries();
+    $saveInquirieInfoById = $inquiries->saveInquirieInfoById($_POST);
+    if($saveInquirieInfoById[0] == 200){
+        $id = $_POST['id'];
+        header("location:./inquires_detail.php?id=".$id);exit;
+    }else{
+        $id = $_POST['id'];
+        header("location:./inquires_detail_update.php?id=".$id."&error=1");exit;
+    }
+}
+
+if($_GET['id']){
+    $id = $_GET['id'];
+    $inquiries = new inquiries();
+    $getInquirieInfoById = $inquiries->getInquirieInfoById($id);
+
+    if($getInquirieInfoById[0] == 200){
+        $getInquirieInfoById = $getInquirieInfoById[2];
+    }else{
+        $getInquirieInfoById = null;
+    }
+
+    $getUserInfoById = $inquiries->getUserInfoById($userid);
+    if($getUserInfoById[0] == 200){
+        $getUserInfoById = $getUserInfoById[2];
+    }else{
+        $getUserInfoById = null;
+    }
+
+}else{
+    header("location: ./add.php");exit;
+}
+
+$inquires_action_detail =  "./inquires_action_detail.php?id=".$id;
+
+$url11 = $inquires_action_detail."&action_title=Requirements Analysis";
+$url12 = $inquires_action_detail."&action_title=Functional Specification";
+$url13 = $inquires_action_detail."&action_title=Design Clarificatio";
+$url21 = $inquires_action_detail."&action_title=Implementation";
+$url22 = $inquires_action_detail."&action_title=Resouces Negotiation";
+$url31 = $inquires_action_detail."&action_title=Existing solutions";
+$url41 = $inquires_action_detail."&action_title=Creative thinking method";
+$url51 = $inquires_action_detail."&action_title=Client Liaison";
+$url52 = $inquires_action_detail."&action_title=Mentor's Advice";
+$url53 = $inquires_action_detail."&action_title=Feedback";
+$url61 = $inquires_action_detail."&action_title=Tasks Allocation";
+$url62 = $inquires_action_detail."&action_title=Project Documents";
+$url71 = "./workspace.php?id=$id";
+?>
+
+<HTML>
+  <HEAD>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例--->
+    <title>request</title>
+    <link rel="stylesheet" href="inq.css">
+    <META HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=edge; charset=UTF-8">
+    <META NAME="Author" CONTENT="K.H.VAT (Mr)">
+    <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+
+      <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+      <script type="text/javascript" src="../js/jquery_1.9.1_jquery.min.js" charset="UTF-8"></script>
+      <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+      <script src="../css/laydate/laydate.js"></script> <!-- 改成你的路径 -->
+      <link href="../css/layui/css/layui.css" rel="stylesheet">
+      <script src="../js/layui/layui.js"></script>
+
+      <script>
+          function CompletedInq(id) {
+
+              $.ajax({
+                  type: 'POST',
+                  url: './HandleInq_aciton.php',
+                  data : {action:"completed",id:id},
+                  dataType: 'json',
+                  success: function (data) {
+                      if(data.code == 200){
+                          window.location.href="./add.php";
+                      }else{
+                          window.location.href="./inquires_detail_update.php?id="+id;
+                      }
+                  },
+                  error: function (xhr, type) {
+
+                  }
+              });
+          }
+      </script>
+      <style>
+          .diy_a{
+              text-decoration: underline;
+              color: gray;
+              pointer-events: none;
+          }
+      </style>
+  </HEAD>
+  <BODY>
+
+
+
+    <section class="header">
+      <nav>
+        <a href="../UM/index.html"><img src="../../images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="student.php">Students</a></li>
+            <li><a href="../../teachers/teacher.php">Teachers</a></li>
+            <li><a href="request.php">Inquiry Requests</a></li>
+            <li><a href="../inquiry.php">Inquiry Home</a></li>
+            <li><a href="../real.php">REAL</a></li>
+         <?php 
+        if(isset($_SESSION["userid"]))
+        {
+      ?>
+		<li><a href="#"><?php echo $_SESSION["useruid"]; ?></a></li>
+		<li><a href="../../includes/logout.inc.php" class="header-login-a">LOGOUT</a></li>
+		<?php 
+        }
+        else 
+        {
+        ?>
+        <li><a href="../register_form.php">SIGN UP</a></li>
+        <li><a href="../../login_form.php" class="header-login-a">LOGIN</a></li>
+        <?php 
+        }
+        ?>
+        </ul>
+      </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+
+      <div class="text-box">
+        <h1>Edit your inquiry</h1>
+        <p style="font-size: 20px;">Here you can update your inquiry</p>
+        <a href="javascript:void(0)" class="hero-btn" style="color: white;" onclick="CompletedInq(<?php echo $id?>)">Completed on</a>
+        <a href="./add.php" class="hero-btn" style="color: white;">GO BACK</a>
+      </div>
+    </section>
+
+    <section class="event" style="padding-top: 60px">
+
+        <form action="./inquires_detail_update.php" method="post">
+
+            <div style="width: 80%;margin-left:10%">
+
+                <table>
+                    <tr>
+                        <td style="width: 450px;">
+                            <div class="input-group" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Received: </span>
+                                </div>
+                                <input class="form-control"  type="text"  id="Received" name="received" aria-label="Received" value="<?php echo $getInquirieInfoById['received']?>">
+                            </div>
+                        </td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td  style="width: 450px;">
+                            <div class="input-group" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Due: </span>
+                                </div>
+                                <input class="form-control "  type="text"  id="Due" name="due" aria-label="Due" value="<?php echo $getInquirieInfoById['due']?>">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <br>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Question: </span>
+                    </div>
+                    <input type="text" class="form-control" id="basic-url" name="question_title" aria-describedby="basic-addon3" value="<?php echo $getInquirieInfoById['question_title']?>">
+                </div>
+                <div class="input-group" style="height: 200px">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Question textarea: </span>
+                    </div>
+                    <textarea class="form-control" aria-label="With textarea" name="question_text" ><?php echo $getInquirieInfoById['question_text']?></textarea>
+                </div>
+
+
+                <br>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Comments: </span>
+                    </div>
+                    <input type="text" class="form-control" id="basic-url" name="comments_title" value="<?php echo $getInquirieInfoById['comments_title']?>" aria-describedby="basic-addon3">
+                </div>
+                <div class="input-group" style="height: 200px">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Comments textarea: </span>
+                    </div>
+                    <textarea class="form-control" aria-label="With textarea" name="comments_text"><?php echo $getInquirieInfoById['comments_text']?></textarea>
+                </div>
+
+
+
+                <br>
+
+                <div class="input-group">
+                    <div class="input-group-prepend" style="height: 140px">
+                        <span class="input-group-text" id="basic-addon3">Actions: </span>
+                    </div>
+                    <?php
+                        $actions_title = $getInquirieInfoById['actions_title'];
+                        if(!empty($actions_title)){
+                            $actions_title = json_decode($actions_title,true);
+                        }else{
+                            $actions_title = [];
+                        }
+
+                    ?>
+                    <div id="checkboxarr"class="layui-form form-control" style="padding-top: 10px;height: 140px">
+                        <span <?php if(in_array("Identify Problems",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Identify Problems",$actions_title)){echo "checked";}?> name="actions[]" title="Identify Problems" value="Identify Problems" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Search for Possible Resources",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Search for Possible Resources",$actions_title)){echo "checked";} ?> name="actions[]" title="Search for Possible Resources" value="Search for Possible Resources" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Compare Existing Solutions",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Compare Existing Solutions",$actions_title)){echo "checked";} ?> name="actions[]" title="Compare Existing Solutions" value="Compare Existing Solutions" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Explore Creative Alternatives",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Explore Creative Alternatives",$actions_title)){echo "checked";} ?>  name="actions[]" title="Explore Creative Alternatives" value="Explore Creative Alternatives" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Consult with Peers and Mentors",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Consult with Peers and Mentors",$actions_title)){echo "checked";} ?> name="actions[]" title="Consult with Peers and Mentors" value="Consult with Peers and Mentors" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Develop their own Methods of Solution",$actions_title)){echo "style='pointer-events: none'";}?>">
+                              <input type="checkbox" <?php if(in_array("Develop their own Methods of Solution",$actions_title)){echo "checked";}?> name="actions[]" title="Develop their own Methods of Solution" value="Develop their own Methods of Solution" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                        <span <?php if(in_array("Share their Results and Findings",$actions_title)){echo "style='pointer-events: none'";}?>">
+                            <input type="checkbox" <?php if(in_array("Share their Results and Findings",$actions_title)){echo "checked";}?> name="actions[]" title="Share their Results and Findings" value="Share their Results and Findings" lay-skin="tag" lay-filter="demo-checkbox-filter">
+                        </span>
+                    </div>
+                </div>
+                <script>
+
+                    layui.use(function(){
+                        var form = layui.form;
+                        var layer = layui.layer;
+
+                        // checkbox 事件
+                        form.on('checkbox(demo-checkbox-filter)', function(data){
+                            var actions = [];
+                            actions['Identify Problems'] = "Identify Problems : <a href='<?php echo $url11;?>' class='diy_a' >Requirements Analysis</a> <a href='<?php echo $url12;?>' class='diy_a'>Functional Specification</a> <a href='<?php echo $url13;?>' class='diy_a'>Design Clarification</a>";
+                            actions['Search for Possible Resources'] = "Search for Possible Resources : <a href='<?php echo $url21;?>' class='diy_a'>Implementation</a> <a href='<?php echo $url22;?>' class='diy_a'>Resouces Negotiation</a>";
+                            actions['Compare Existing Solutions'] = "Compare Existing Solutions : <a href='<?php echo $url31;?>' class='diy_a'>Existing solutions</a> ";
+                            actions['Explore Creative Alternatives'] = "Explore Creative Alternatives : <a href='<?php echo $url41;?>' class='diy_a'>Creative thinking method</a> ";
+                            actions['Consult with Peers and Mentors'] = "Consult with Peers and Mentors : <a href='<?php echo $url51;?>' class='diy_a'>Client Liaison</a> <a href='<?php echo $url52;?>' class='diy_a'>Mentor's Advice</a> <a href='<?php echo $url53;?>' class='diy_a'>Feedback</a>";
+                            actions['Develop their own Methods of Solution'] = "Develop their own Methods of Solution : <a href='<?php echo $url61;?>' class='diy_a'>Tasks Allocation</a> <a href='<?php echo $url62;?>' class='diy_a'>Project Documents</a> ";
+                            actions['Share their Results and Findings'] = "Share their Results and Findings : <a href='<?php echo $url71;?>' class='diy_a'>Work Space</a> ";
+
+                            // var elem = data.elem; // 获得 checkbox 原始 DOM 对象
+                            // var checked = elem.checked; // 获得 checkbox 选中状态
+                            // var value = elem.value; // 获得 checkbox 值
+                            // var othis = data.othis; // 获得 checkbox 元素被替换后的 jQuery 对象
+
+                            var showcheckValue = [];
+                            var checkValue = [];
+                            var submit_show_actions_text = [];
+                            $('#checkboxarr input[type=checkbox]:checked').each(function () {
+                                showcheckValue.push(actions[$(this).val()]+"<br>");
+                                checkValue.push(actions[$(this).val()]);
+                                submit_show_actions_text.push(actions[$(this).val()]+"<br>");
+
+                            });
+
+                            $("#show_actions_text").html(showcheckValue);
+                            $("#actions_text").val(checkValue);
+                            $("#submit_show_actions_text").val(submit_show_actions_text);
+
+                        });
+
+                    });
+
+                </script>
+
+                <div class="input-group" style="height: 200px">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Actions textarea: </span>
+                    </div>
+                    <div class="form-control" id="show_actions_text" style="height: 200px">
+                        <?php echo $getInquirieInfoById['submit_show_actions_text'];?>
+                    </div>
+                    <textarea id="actions_text" name="actions_text" style="display: none" ><?php echo $getInquirieInfoById['actions_text'];?></textarea>
+                    <textarea id="submit_show_actions_text" name="submit_show_actions_text" style="display: none" ><?php echo $getInquirieInfoById['submit_show_actions_text'];?></textarea>
+
+
+<!--                    <textarea class="form-control" id="actions_text" aria-label="With textarea" name="actions_text">--><?php //echo $getInquirieInfoById['actions_text']?><!--</textarea>-->
+                </div>
+
+                <br>
+                <!--<div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Files: </span>
+                    </div>
+
+                    <input type="text" class="form-control" id="basic-url" name="files_title" value="<?php /*echo $getInquirieInfoById['files_title']*/?>" aria-describedby="basic-addon3">
+                </div>-->
+
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose files</label>
+                </div>
+                <br><br><br>
+
+
+                <?php
+                    if($getInquirieInfoById['consultant']){
+                        $consultant_arr = json_decode($getInquirieInfoById['consultant'],true);
+                    }else{
+                        $consultant_arr = [];
+                    }
+                ?>
+                <table>
+                    <tr><b>Consultant</b></tr>
+                    <tr>
+                        <td style="width: 450px;">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Name</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1" name="cname" value="<?php echo isset($consultant_arr['cname']) ? $consultant_arr['cname'] : '' ?>">
+                            </div>
+                        </td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td  style="width: 450px;">
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Tel</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Tel" aria-label="Tel" aria-describedby="basic-addon1" name="ctel" value="<?php echo isset($consultant_arr['ctel']) ? $consultant_arr['ctel'] : '' ?>">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 450px;">
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">E-Mail</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="E-Mail" aria-label="E-Mail" aria-describedby="basic-addon1" name="cemail" value="<?php echo isset($consultant_arr['cemail']) ? $consultant_arr['cemail'] : '' ?>">
+                            </div>
+                        </td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td  style="width: 450px;">
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon1">Staff Number</span>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Staff Number" aria-label="Staff Number" aria-describedby="basic-addon1" name="cstaffnum" value="<?php echo isset($consultant_arr['cstaffnum']) ? $consultant_arr['cstaffnum'] : '' ?>">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+                <input type="hidden" name="id" value="<?php echo $id?>">
+                <button type="submit" class="btn btn-primary" style="margin-top: 5%;width: 40%">Submit</button>
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+    </script>
+
+</BODY>
+</HTML>
+<script>
+
+    laydate.render({
+        elem: '#Received'
+        ,lang: 'en'
+        ,type: 'datetime'
+        ,format: 'yyyy-MM-dd HH:mm'
+        ,btns: ['confirm']
+    });
+
+    laydate.render({
+        elem: '#Due'
+        ,lang: 'en'
+        ,type: 'datetime'
+        ,format: 'yyyy-MM-dd HH:mm'
+        ,btns: ['confirm']
+    });
+
+    $('#customFile').on('change',function(){
+        var fileName = $(this).val();
+        label = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+        $(this).next('.custom-file-label').html(label);
+    })
+
+
+
+</script>
