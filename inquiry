@@ -1,0 +1,215 @@
+<?php
+
+session_start();
+
+?>
+
+
+<HTML>
+  <HEAD>
+      <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例---->
+      <title>inquiry</title>
+      <link rel="stylesheet" href="css/inq.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;1,400;1,500&family=Roboto:ital,wght@0,500;0,900;1,300&family=Young+Serif&display=swap" rel="stylesheet"><!----谷歌文字体---->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"><!---符号---->
+     <TITLE>index</TITLE>
+  </HEAD>
+  <BODY>
+
+
+
+    <section class="header">
+      <nav>
+        <a href="../UM/index.html"><img src="images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="real.php">Home</a></li>
+            <li><a href="course.php">Courses</a></li>
+            <li><a href="resources.php">Resources</a></li>
+            <li><a href="communication.php">Communication</a></li>
+            <li><a href="assessment.php">Assessment</a></li>
+            <li><a href="super.php">SUPER</a></li>
+         <?php 
+        if(isset($_SESSION["userid"]))
+        {
+      ?>
+		<li><a href="#"><?php echo $_SESSION["useruid"]; ?></a></li>
+		<li><a href="includes/logout.inc.php" class="header-login-a">LOGOUT</a></li>
+		<?php 
+        }
+        else 
+        {
+        ?>
+        <li><a href="register_form.php">SIGN UP</a></li>
+        <li><a href="login_form.php" class="header-login-a">LOGIN</a></li>
+        <?php 
+        }
+        ?>
+        </ul>
+      </div>
+      <i class="fa fa-bars" onclick="showMenu()"></i>
+    </nav>
+
+      <div class="text-box">
+        <h1>Welcome to the Inquiry Module! </h1>
+        <p style="font-size: 20px;">The collaborative Web-based inquiry service, CWIS,
+        is designed to support teacher-student collaboration, to make inquiry activity
+        more visible, and to facilitate tracking of service usage, and cataloging/archiving
+        of inquiry requests and actions.</p>
+        <a href="super.html" class="hero-btn" style="color: white;">Super Key</a>
+      </div>
+    </section>
+
+
+    <section class="degree">
+        <div class="degree-box">
+          <a href="inquiry/teachers/teacher.php" class="hero-btn red-btn">Teachers</a>
+          <a href="inquiry/student.php" class="hero-btn red-btn">Students</a>
+          <a href="inquiry/request.php" class="hero-btn red-btn">Inquiry Requests</a>
+          <a href="inquiry/FEEDBACK/Index.htm" class="hero-btn red-btn">Feedback</a>
+        </div>
+      </div>
+    </section>
+
+<section class="inq">
+  <div class="row2">
+    <div class="inq-col">
+      <h1>User Areas and Inquiry Requests in CWIS</h1>
+      <p>Both teachers and students have their own areas in the CWIS service,
+		   where they can get to by clicking the Teachers or Students links on the left.
+		    Clicking on the Inquiry Requests link takes users to an area where they can
+		    obtain a list of all pending collaborative inquiry requests, and where they
+		    can also get to the archive of previous closed inquiries.</p>
+      <a href="inquiry/inq_requests/request.html" class="hero-btn red-btn">Inquiry Requests</a>
+    </div>
+    <div class="inq-col">
+      <img src="../images/Inquiry.png">
+    </div>
+  </div>
+</section>
+
+<section class="inq">
+  <div class="row2">
+    <div class="inq-col">
+      <h1>Student-Teacher Interaction and Inquiry Requests in CWIS</h1>
+      <p>A typical scenario starts when a student adds himself/herself as a client by clicking on
+		  the Students link. This generates the student's personal Web page with which the student
+		  can initiate inquiry requests, view one's pending and closed inquiry requests, and view
+		  statistics about one's own usage of inquiry services. When the student  within the personal
+		  web page, initiates a new inquiry request, a request Web page is created, on which interaction
+		  between the student and the teacher occurs. Through the request Web page, students and teachers
+		   can post comments, record actions, use emails, share related file, and provide feedback.
+		   When the interaction is completed, inquiry interactions are maintained in a searchable archive,
+		   which can be viewed by all students and teachers.</p>
+      <a href="inquiry/students/student.html" class="hero-btn red-btn">Students</a>
+    </div>
+    <div class="inq-col">
+      <img src="../images/studyum-um-file-1-1200x801.webp">
+    </div>
+  </div>
+</section>
+
+<section class="inq">
+  <div class="row2">
+    <div class="inq-col">
+      <h1>Feedback</h1>
+      <p>The Feedback link allows any user to feedback any personal comments after using the CWIS service
+		   so that system improvements can be incorporated in the near future.</p>
+      <a href="inquiry/FEEDBACK/INDEX.HTM" class="hero-btn red-btn">Feedback</a>
+    </div>
+    <div class="inq-col">
+      <img src="../images/feedback.webp">
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+    </script>
+
+</BODY>
+</HTML>
