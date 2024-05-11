@@ -1,0 +1,946 @@
+<?php
+ini_set('display_errors', 'On');
+include "../../classes/dbh.classes.php";
+include "../../classes/inquiries.classes.php";
+include "../../classes/teams.classes.php";
+include "../../classes/groupspace.classes.php";
+
+session_start();
+@$userid = $_SESSION["userid"];
+if(empty($userid)){
+    header("location: ../../../login_form.php");exit;
+}
+$team_zone_show = false;
+$inquiry_zone_show = false;
+if($_POST) {
+
+    $keyword = $_POST['keyword'];
+    if(substr($keyword, 0, strlen('inquiry')) === 'inquiry'){
+
+        $substring = strstr($keyword, 'inquiry');
+        if ($substring) {
+            $Inquirieid = substr($substring, strlen('inquiry'));
+        }
+
+        if(@$Inquirieid){
+            $inquiries = new inquiries();
+            $getInquirieInfoById = $inquiries->getInquirieInfoById($Inquirieid);
+            if($getInquirieInfoById[0] == 200 && !empty($getInquirieInfoById[2])){
+                $inquiry_zone_show = true;
+                $getInquirieInfoById = $getInquirieInfoById[2];
+
+                $inquiry_user_id = $getInquirieInfoById['users_id'];
+
+                $getUserInfoById = $inquiries->getUserInfoById($inquiry_user_id);
+                if($getUserInfoById[0] == 200){
+                    $getUserInfoById = $getUserInfoById[2];
+                }else{
+                    $getUserInfoById = null;
+                }
+
+
+            }else{
+                $getInquirieInfoById = null;
+            }
+
+        }
+
+
+    }
+
+    $inquiries = new inquiries();
+    $getUserInfoByUsers_uid = $inquiries->getUserInfoBykeyword($keyword);
+
+    if ($getUserInfoByUsers_uid[0] == 200 && !empty($getUserInfoByUsers_uid[2])) {
+        $getUserInfoByUsers_uid = $getUserInfoByUsers_uid[2];
+        $getUserInfoByUsers_uid_show =
+            "USERS_ID: " . $getUserInfoByUsers_uid['users_id'] . "<br>" .
+            "USERS_UID: " . $getUserInfoByUsers_uid['users_uid'] . "<br>" .
+            "USERS_EMAIL: " . $getUserInfoByUsers_uid['users_email'] . "<br>" .
+            "USERS_NAME: " . $getUserInfoByUsers_uid['users_name'] . "<br>" .
+            "USERS_NUMBER: " . $getUserInfoByUsers_uid['users_number'] . "<br>" .
+            "USERS_TEL: " . $getUserInfoByUsers_uid['users_tel'] . "<br>" .
+            "SELF_INTRODUCTION_TITLE: " . $getUserInfoByUsers_uid['self_introduction_title'] . "<br>" .
+            "SELF_INTRODUCTION_TEXT: " . $getUserInfoByUsers_uid['self_introduction_text'] . "<br>" .
+            "HOBBIES_ABILITIES_TITLE: " . $getUserInfoByUsers_uid['hobbies_abilities_title'] . "<br>" .
+            "HOBBIES_ABILITIES_TEXT: " . $getUserInfoByUsers_uid['hobbies_abilities_text'] . "<br>";
+
+
+        $userid = $getUserInfoByUsers_uid['users_id'];
+
+        $teams = new teams();
+        $team_zone_show = false;
+        //2 PersonTeam Request Info:
+        $get2persontemByIdForRequest = $teams->get2persontemRequestByUser1_id($userid);
+        if($get2persontemByIdForRequest[0] == 200){
+            $team_zone_show = true;
+            $get2persontemByIdForRequest = $get2persontemByIdForRequest[2];
+        }else{
+            $get2persontemByIdForRequest = array();
+        }
+
+        //2 PersonTeam Receive Request Info:
+        $get2persontemRequestById = $teams->get2persontemRequestByUser2_id($userid);
+        if($get2persontemRequestById[0] == 200){
+            $team_zone_show = true;
+            $get2persontemRequestById = $get2persontemRequestById[2];
+        }else{
+            $get2persontemRequestById = null;
+        }
+
+        //获取2人组队友信息
+        $get2personteamid_byuserid = $teams->get2personteamid_byuserid($userid);
+        $get2personteam_members = "";
+        if ($get2personteamid_byuserid[0] == 200 && !empty($get2personteamid_byuserid[2])) {
+            $team_zone_show = true;
+            $get2personteamid_byuserid = $get2personteamid_byuserid[2];
+
+            $user1_id_info = $inquiries->getUserInfoById($get2personteamid_byuserid['user1_id']);
+            if ($user1_id_info[2]) {
+                $user1_id_info = $user1_id_info[2];
+            }
+            $user2_id_info = $inquiries->getUserInfoById($get2personteamid_byuserid['user2_id']);
+            if ($user2_id_info[2]) {
+                $user2_id_info = $user2_id_info[2];
+            }
+
+            $get2personteam_members .= '<div class="layui-bg-gray" style="padding: 16px;">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $user1_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $user1_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $user1_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $user1_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $user1_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $user1_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $user1_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $user1_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $user1_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $user2_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $user2_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $user2_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $user2_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $user2_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $user2_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $user2_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $user2_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $user2_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>';
+
+            $get4personteam_members = "";
+            //获取4人组队员信息
+            $get4personteamid_byuserid = $teams->get4personteamid_byuserid($userid);
+            if ($get4personteamid_byuserid[0] == 200 && !empty($get4personteamid_byuserid[2])) {
+
+                $team_zone_show = true;
+                $get4personteamid_byuserid = $get4personteamid_byuserid[2];
+
+                $t1_user1_id_info = $inquiries->getUserInfoById($get4personteamid_byuserid['t1_user1_id']);
+                if ($t1_user1_id_info[2]) {
+                    $t1_user1_id_info = $t1_user1_id_info[2];
+                }
+                $t1_user2_id_info = $inquiries->getUserInfoById($get4personteamid_byuserid['t1_user2_id']);
+                if ($t1_user2_id_info[2]) {
+                    $t1_user2_id_info = $t1_user2_id_info[2];
+                }
+                $t2_user1_id_info = $inquiries->getUserInfoById($get4personteamid_byuserid['t2_user1_id']);
+                if ($t2_user1_id_info[2]) {
+                    $t2_user1_id_info = $t2_user1_id_info[2];
+                }
+                $t2_user2_id_info = $inquiries->getUserInfoById($get4personteamid_byuserid['t2_user2_id']);
+                if ($t2_user2_id_info[2]) {
+                    $t2_user2_id_info = $t2_user2_id_info[2];
+                }
+
+                $get4personteam_members .= '<div class="layui-bg-gray" style="padding: 16px;">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $t1_user1_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $t1_user1_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $t1_user1_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $t1_user1_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $t1_user1_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $t1_user1_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $t1_user1_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $t1_user1_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $t1_user1_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $t1_user2_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $t1_user2_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $t1_user2_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $t1_user2_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $t1_user2_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $t1_user2_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $t1_user2_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $t1_user2_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $t1_user2_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $t2_user1_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $t2_user1_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $t2_user1_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $t2_user1_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $t2_user1_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $t2_user1_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $t2_user1_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $t2_user1_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $t2_user1_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md3">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $t2_user2_id_info['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $t2_user2_id_info['users_email'] . '<br>
+          <b>users_name:</b>' . $t2_user2_id_info['users_name'] . '<br>
+          <b>users_number:</b>' . $t2_user2_id_info['users_number'] . '<br>
+          <b>users_tel:</b>' . $t2_user2_id_info['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $t2_user2_id_info['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $t2_user2_id_info['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $t2_user2_id_info['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $t2_user2_id_info['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>';
+            }
+
+
+            //5人组队
+            $get5personteam_by_userid = $teams->get5personteam_by_userid($userid);
+
+            if ($get5personteam_by_userid[0] == 200 && !empty($get5personteam_by_userid[2])) {
+
+                $team_zone_show = true;
+                $get5personteam_by_userid = $get5personteam_by_userid[2];
+
+                $get5personteam_show = "<div>
+<span><b>team_introduction_title:</b>" . $get5personteam_by_userid['team_introduction_title'] . "</span><span style='padding-left: 15%'><b>team_introduction_text:</b>" . $get5personteam_by_userid['team_introduction_text'] . "</span>
+<br>
+<span><b>hobbies_abilities_title:</b>" . $get5personteam_by_userid['hobbies_abilities_title'] . "</span><span style='padding-left: 15%'><b>hobbies_abilities_text:</b>" . $get5personteam_by_userid['hobbies_abilities_text'] . "</span>
+
+</div>";
+
+                $get5personteam_members = '<div class="layui-bg-gray" style="padding: 16px;">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md2">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $get5personteam_by_userid['t1_user1_info']['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $get5personteam_by_userid['t1_user1_info']['users_email'] . '<br>
+          <b>users_name:</b>' . $get5personteam_by_userid['t1_user1_info']['users_name'] . '<br>
+          <b>users_number:</b>' . $get5personteam_by_userid['t1_user1_info']['users_number'] . '<br>
+          <b>users_tel:</b>' . $get5personteam_by_userid['t1_user1_info']['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $get5personteam_by_userid['t1_user1_info']['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $get5personteam_by_userid['t1_user1_info']['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $get5personteam_by_userid['t1_user1_info']['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $get5personteam_by_userid['t1_user1_info']['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md2">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $get5personteam_by_userid['t1_user2_info']['users_uid'] . '</div>
+        <div class="layui-card-body">
+         <b>users_email</b>:' . $get5personteam_by_userid['t1_user2_info']['users_email'] . '<br>
+          <b>users_name:</b>' . $get5personteam_by_userid['t1_user2_info']['users_name'] . '<br>
+          <b>users_number:</b>' . $get5personteam_by_userid['t1_user2_info']['users_number'] . '<br>
+          <b>users_tel:</b>' . $get5personteam_by_userid['t1_user2_info']['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $get5personteam_by_userid['t1_user2_info']['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $get5personteam_by_userid['t1_user2_info']['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $get5personteam_by_userid['t1_user2_info']['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $get5personteam_by_userid['t1_user2_info']['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md2">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $get5personteam_by_userid['t2_user1_info']['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $get5personteam_by_userid['t2_user1_info']['users_email'] . '<br>
+          <b>users_name:</b>' . $get5personteam_by_userid['t2_user1_info']['users_name'] . '<br>
+          <b>users_number:</b>' . $get5personteam_by_userid['t2_user1_info']['users_number'] . '<br>
+          <b>users_tel:</b>' . $get5personteam_by_userid['t2_user1_info']['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $get5personteam_by_userid['t2_user1_info']['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $get5personteam_by_userid['t2_user1_info']['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $get5personteam_by_userid['t2_user1_info']['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $get5personteam_by_userid['t2_user1_info']['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md2">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $get5personteam_by_userid['t2_user2_info']['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $get5personteam_by_userid['t2_user2_info']['users_email'] . '<br>
+          <b>users_name:</b>' . $get5personteam_by_userid['t2_user2_info']['users_name'] . '<br>
+          <b>users_number:</b>' . $get5personteam_by_userid['t2_user2_info']['users_number'] . '<br>
+          <b>users_tel:</b>' . $get5personteam_by_userid['t2_user2_info']['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $get5personteam_by_userid['t2_user2_info']['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $get5personteam_by_userid['t2_user2_info']['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $get5personteam_by_userid['t2_user2_info']['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $get5personteam_by_userid['t2_user2_info']['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md2">
+      <div class="layui-card">
+        <div class="layui-card-header">' . $get5personteam_by_userid['t3_user1_info']['users_uid'] . '</div>
+        <div class="layui-card-body">
+          <b>users_email</b>:' . $get5personteam_by_userid['t3_user1_info']['users_email'] . '<br>
+          <b>users_name:</b>' . $get5personteam_by_userid['t3_user1_info']['users_name'] . '<br>
+          <b>users_number:</b>' . $get5personteam_by_userid['t3_user1_info']['users_number'] . '<br>
+          <b>users_tel:</b>' . $get5personteam_by_userid['t3_user1_info']['users_tel'] . '<br>
+          <b>self_introduction_title:</b>' . $get5personteam_by_userid['t3_user1_info']['self_introduction_title'] . '<br>
+          <b>self_introduction_text:</b>' . $get5personteam_by_userid['t3_user1_info']['self_introduction_text'] . '<br>
+          <b>hobbies_abilities_title:</b>' . $get5personteam_by_userid['t3_user1_info']['hobbies_abilities_title'] . '<br>
+          <b>hobbies_abilities_text:</b>' . $get5personteam_by_userid['t3_user1_info']['hobbies_abilities_text'] . '<br>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>';
+            }
+
+        }
+
+    }else{
+        $getUserInfoByUsers_uid = array();
+    }
+
+
+}
+
+?>
+<HTML>
+<HEAD>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例---->
+    <title>super</title>
+    <link rel="stylesheet" href="../../css/super.css">
+    <!--<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;1,400;1,500&family=Roboto:ital,wght@0,500;0,900;1,300&family=Young+Serif&display=swap" rel="stylesheet">--><!----谷歌文字体---->
+  <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">--><!---符号---->
+   <TITLE>index</TITLE>
+    <script src="../../../js/jquery_1.9.1_jquery.min.js"></script>
+    <link href="../../css/layui/css/layui.css" rel="stylesheet">
+    <script src="../../js/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
+
+    <style>
+        /* 设置表格的基本样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse; /* 边框合并 */
+            margin: 25px 0;
+            font-size: 0.9em;
+            min-width: 400px;
+            border-radius: 5px 5px 0 0; /* 圆角边框 */
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+        }
+
+        /* 设置表头的样式 */
+        th {
+            background-color: #009879; /* 蓝色背景 */
+            color: #ffffff; /* 白色文字 */
+            font-size: 1em;
+            padding: 10px;
+            text-align: left;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* 设置表格行的样式 */
+        tr {
+            background-color: #f3f3f3; /* 浅灰色背景 */
+            border-width: 1px;
+            border-style: solid;
+            border-color: #ffffff;
+        }
+
+        /* 设置单元格的样式 */
+        td {
+            color: #009879; /* 蓝色文字 */
+            padding: 10px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #ffffff;
+            text-align: left;
+        }
+
+        /* 鼠标悬停时改变行的背景色 */
+        tr:hover {
+            background-color: #ffffff; /* 白色背景 */
+        }
+    </style>
+</HEAD>
+<BODY>
+
+  <section class="header">
+    <nav>
+      <a href="../UM/index.html"><img src="../../images/UM_logo_horizontal-2.webp"></a>
+      <div class="nav-links" id="navlinks">
+        <i class="fa fa-times" onclick="hideMenu()"></i>
+        <ul>
+          <li><a href="real.php">Real</a></li>
+          <li><a href="course.php">Courses</a></li>
+          <li><a href="resources.php">Resources</a></li>
+          <li><a href="communication.php">Communication</a></li>
+          <li><a href="inquiry.php">Inquiry</a></li>
+          <li><a href="assessment.php">Assessment</a></li>
+         <?php 
+        if(isset($_SESSION["userid"]))
+        {
+      ?>
+		<li><a href="#"><?php echo $_SESSION["useruid"]; ?></a></li>
+		<li><a href="includes/logout.inc.php" class="header-login-a">LOGOUT</a></li>
+		<?php 
+        }
+        else 
+        {
+        ?>
+        <li><a href="register_form.php">SIGN UP</a></li>
+        <li><a href="login_form.php" class="header-login-a">LOGIN</a></li>
+        <?php 
+        }
+        ?>
+        </ul>
+      </div>
+      <i class="fa fa-bars" onclick="showMenu()"></i>
+    </nav>
+
+    <div class="text-box">
+      <h1>Organizational Memory</h1><br>
+      <a href="./web.php" class="hero-btn" style="color: white;">GO BACK</a>
+    </div>
+  </section>
+
+
+  <section class="degree">
+
+      <div style="display: grid;place-items: center">
+
+          <div class="degree-box" style="width: 50%;">
+
+              <form action="./org_memory.php" method="post">
+                  <div class="layui-form-item">
+                      <div class="layui-row">
+                          <div class="layui-col-xs7">
+                              <div class="layui-input-wrap">
+                                  <div class="layui-input-prefix">
+                                      <i class="layui-icon layui-icon-search"></i>
+                                  </div>
+                                  <input type="text" name="keyword" value="<?php echo @$keyword;?>"  placeholder="users_uid or username or inquiryid" autocomplete="off" class="layui-input" id="search">
+                              </div>
+                          </div>
+                          <div class="layui-col-xs5">
+                              <div style="margin-left: 11px;">
+                                  <button type="submit" class="layui-btn layui-btn-fluid layui-btn-primary" style="background-color: #1e9fff;color: white" lay-on="reg-get-vercode">搜 索</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </form>
+
+          </div>
+
+      </div>
+
+      <div>
+
+
+          <?php
+
+            if(@$getUserInfoByUsers_uid){
+                ?>
+
+                <fieldset>
+                    <legend style="background-color: lightskyblue;color: aliceblue;">User Info</legend>
+                    <div style="margin: 15px">
+                        <div style="float:left;margin-right: 25px;margin-top: 20px">
+                            <div class="card" style="width: 18rem;height: 350px;margin-bottom: 10px">
+                                <div class="card-body">
+                                    <h5 class="card-title">User Card</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">&nbsp;</h6>
+                                    <p class="card-text" style="text-align: left">Name: <?php echo $getUserInfoByUsers_uid['users_uid']?></p>
+                                    <p class="card-text" style="text-align: left">Full name: <?php echo $getUserInfoByUsers_uid['users_name']?></p>
+                                    <p class="card-text" style="text-align: left">Student number: <?php echo $getUserInfoByUsers_uid['users_number']?></p>
+                                    <p class="card-text" style="text-align: left">Tele: <?php echo $getUserInfoByUsers_uid['users_tel']?></p>
+                                    <p class="card-text" style="text-align: left">E-Mail: <span style="font-size:15px"><?php echo $getUserInfoByUsers_uid['users_email']?></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="card" style="margin-bottom: 25px;text-align: left">
+                                <div class="card-header">
+                                    self-introduction: <?php echo @$getUserInfoByUsers_uid['self_introduction_title']?>
+                                </div>
+                                <div class="card-body">
+                                    <!--<h5 class="card-title">Special title treatment</h5>-->
+                                    <p class="card-text"><pre><?php echo @$getUserInfoByUsers_uid['self_introduction_text']?></pre></p>
+                                </div>
+                            </div>
+                            <div class="card" style="margin-bottom: 25px;text-align: left">
+                                <div class="card-header">
+                                    Hobbies and abilities: <?php echo @$getUserInfoByUsers_uid['hobbies_abilities_title']?>
+                                </div>
+                                <div class="card-body">
+                                    <!--<h5 class="card-title">Special title treatment</h5>-->
+                                    <p class="card-text"><pre><?php echo @$getUserInfoByUsers_uid['hobbies_abilities_text']?></pre></p>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </fieldset>
+
+                <?php
+            }
+          ?>
+
+
+          <fieldset style="display:
+          <?php
+              if($team_zone_show == true){
+                  echo 'show';
+              }else{
+                  echo 'none';
+              }
+          ?>">
+              <legend style="background-color: lightskyblue;color: aliceblue;">Team Info</legend>
+              <table BORDER class="table table-hover" >
+
+                  <!--              <tr style="text-align: center">-->
+                  <!--                  <td style="text-align: center">USERINFO:</td>-->
+                  <!--                  <td>--><?php //echo @$getUserInfoByUsers_uid_show;?><!--</td>-->
+                  <!--              </tr>-->
+
+                  <tr>
+                      <td colspan="2">
+                          <div class="layui-collapse" lay-accordion>
+                              <div class="layui-colla-item">
+                                  <div class="layui-colla-title">2 PersonTeam Receive Request Info:</div>
+                                  <div class="layui-colla-content">
+                                      <table class="table">
+                                          <thead>
+                                          <tr>
+                                              <th >Type</th>
+                                              <th >Name</th>
+                                              <th >Time</th>
+                                              <th >Want to Say</th>
+                                          </tr>
+                                          </thead>
+                                          <tbody>
+                                          <?php
+                                          if(empty($get2persontemRequestById) && empty($get4persontemRequestByT2User_id)){
+                                              ?>
+                                              <tr>
+                                                  <td colspan="4" style="text-align: center">EMPTY</td>
+                                              </tr>
+                                              <?php
+                                          }else{
+                                              foreach ($get2persontemRequestById as $item=>$value){
+                                                  ?>
+                                                  <tr>
+                                                      <td >2personteam_request</td>
+                                                      <td ><?php echo $value['user1_id_info']['users_name'] ?></td>
+                                                      <td ><?php echo date("Y-m-d H:i",$value['createtime']) ?></td>
+                                                      <td ><?php echo $value['iwant2say'] ?></td>
+                                                  </tr>
+                                                  <?php
+                                              }
+                                          }
+                                          ?>
+                                          </tbody>
+
+                                      </table>
+                                  </div>
+                              </div>
+
+
+                              <div class="layui-colla-item">
+                                  <div class="layui-colla-title">2 PersonTeam Request Info:</div>
+                                  <div class="layui-colla-content">
+                                      <table class="table">
+                                          <thead>
+                                          <tr>
+                                              <th >Type</th>
+                                              <th >Name</th>
+                                              <th >Time</th>
+                                              <th >Want to Say</th>
+                                              <th >Status</th>
+                                          </tr>
+                                          </thead>
+                                          <tbody>
+                                          <?php
+                                          if(empty($get2persontemByIdForRequest)){
+                                              $get2persontemByIdForRequest = array();
+                                          }
+                                          foreach (@$get2persontemByIdForRequest as $item=>$value){
+                                              ?>
+                                              <tr>
+                                                  <td >2personteam_request</td>
+                                                  <td ><?php echo $value['user2_id_info']['users_name'] ?></td>
+                                                  <td ><?php echo date("Y-m-d H:i",$value['createtime']) ?></td>
+                                                  <td ><?php echo $value['iwant2say'] ?></td>
+                                                  <td >
+
+                                                      <?php
+                                                      if($value['status'] == '0'){
+                                                          ?>
+                                                          <span style="color: #1e9fff">Wait For Target Opt!</span>
+                                                          <?php
+                                                      }elseif($value['status'] == '2'){
+                                                          ?>
+                                                          <span style="color: #ff0000">Target Refuse!</span>
+                                                          <?php
+                                                      }elseif($value['status'] == '1'){
+                                                          ?>
+                                                          <span style="color: green">Self Confirmed!</span>
+                                                          <?php
+                                                      }elseif($value['status'] == '3'){
+                                                          ?>
+                                                          <span style="color: darkgreen">Target Confirmed!</span>
+                                                          <?php
+                                                      }elseif($value['status'] == '4'){
+                                                          ?>
+                                                          <span style="color: #ff0000">Self Set Waiting!</span>
+                                                          <?php
+                                                      }
+                                                      ?>
+                                                  </td>
+                                              </tr>
+                                              <?php
+                                          }
+
+                                          ?>
+                                          </tbody>
+                                      </table>
+
+                                  </div>
+                              </div>
+
+
+                              <div class="layui-colla-item">
+                                  <div class="layui-colla-title">2 PersonTeam Info:</div>
+                                  <div class="layui-colla-content">
+                                      <p> <?php echo @$get2personteam_members;?></p>
+                                  </div>
+                              </div>
+
+
+                              <div class="layui-colla-item">
+                                  <div class="layui-colla-title">4 PersonTeam Info:</div>
+                                  <div class="layui-colla-content">
+                                      <p> <?php echo @$get4personteam_members;?></p>
+                                  </div>
+                              </div>
+                              <div class="layui-colla-item">
+                                  <div class="layui-colla-title">5 PersonTeam Info:</div>
+                                  <div class="layui-colla-content">
+                                      <blockquote class="layui-elem-quote">
+                                          <?php echo @$get5personteam_show?>
+                                      </blockquote>
+                                      <p> <?php echo @$get5personteam_members;?></p>
+                                  </div>
+                              </div>
+
+
+                          </div>
+                      </td>
+                  </tr>
+
+
+              </table>
+          </fieldset>
+
+
+
+          <fieldset style="display:
+          <?php
+          if($inquiry_zone_show == true){
+              echo 'show';
+          }else{
+              echo 'none';
+          }
+          ?>">
+              <legend style="background-color: lightskyblue;color: aliceblue;">Inquery Info</legend>
+
+
+
+              <div style="margin: 15px">
+
+                  <div style="float:left;margin-right: 25px">
+
+                      <div class="card" style="width: 18rem;margin-bottom: 10px">
+                          <div class="card-body">
+                              <h5 class="card-title">Inquriy <?php echo $getInquirieInfoById['reference_no']?></h5>
+                              <h6 class="card-subtitle mb-2 text-muted">&nbsp;</h6>
+                              <p class="card-text" style="text-align: left">Received: <?php echo $getInquirieInfoById['received']?></p>
+                              <p class="card-text" style="text-align: left">Due: <?php echo $getInquirieInfoById['due']?></p>
+                              <p class="card-text" style="text-align: left">Status: <?php echo $getInquirieInfoById['status']?></p>
+                              <?php
+                              if($getInquirieInfoById['status'] == 'Closed')
+                              ?>
+                              <p class="card-text" style="text-align: left">Time Usage: <?php echo $getInquirieInfoById['timeu']?> mins</p>
+                              <?
+
+                              ?>
+                          </div>
+                      </div>
+
+                      <div class="card" style="width: 18rem;height: 270px;margin-bottom: 10px">
+                          <div class="card-body">
+                              <h5 class="card-title">Client</h5>
+                              <h6 class="card-subtitle mb-2 text-muted">&nbsp;</h6>
+                              <p class="card-text" style="text-align: left">Name: <?php echo $getUserInfoById['users_uid']?></p>
+                              <p class="card-text" style="text-align: left">Full name: <?php echo $getUserInfoById['users_name']?></p>
+                              <p class="card-text" style="text-align: left">Student number: <?php echo $getUserInfoById['users_number']?></p>
+                              <p class="card-text" style="text-align: left">Tele: <?php echo $getUserInfoById['users_tel']?></p>
+                              <p class="card-text" style="text-align: left">E-Mail: <span style="font-size:15px"><?php echo $getUserInfoById['users_email']?></span></p>
+
+                          </div>
+                      </div>
+                      <div class="card" style="width: 18rem;height: 250px">
+                          <div class="card-body">
+                              <h5 class="card-title">Consultant</h5>
+                              <h6 class="card-subtitle mb-2 text-muted">&nbsp;</h6>
+                              <?php
+                              if($getInquirieInfoById['consultant']){
+                                  $consultant = json_decode($getInquirieInfoById['consultant'],true);
+                              }else{
+                                  $consultant = [];
+                              }
+                              ?>
+                              <p class="card-text" style="text-align: left">Name: <?php echo isset($consultant['cname']) ? $consultant['cname'] : '' ?></p>
+                              <p class="card-text" style="text-align: left">E-Mail: <?php echo isset($consultant['cemail']) ? $consultant['cemail'] : '' ?></p>
+                              <p class="card-text" style="text-align: left">Tel: <?php echo isset($consultant['ctel']) ? $consultant['ctel'] : '' ?></p>
+                              <p class="card-text" style="text-align: left">Staff Number: <?php echo isset($consultant['cstaffnum']) ? $consultant['cstaffnum'] : '' ?></p>
+                          </div>
+                      </div>
+
+                  </div>
+                  <div>
+
+                      <div class="card" style="margin-bottom: 25px;text-align: left">
+                          <div class="card-header">
+                              Question: <?php echo $getInquirieInfoById['question_title']?>
+                          </div>
+                          <div class="card-body">
+                              <!--<h5 class="card-title">Special title treatment</h5>-->
+                              <p class="card-text"><pre><?php echo $getInquirieInfoById['question_text']?></pre></p>
+                          </div>
+                      </div>
+                      <div class="card" style="margin-bottom: 25px;text-align: left">
+                          <div class="card-header">
+                              Comments: <?php echo $getInquirieInfoById['comments_title']?>
+                          </div>
+                          <div class="card-body">
+                              <!--<h5 class="card-title">Special title treatment</h5>-->
+                              <p class="card-text"><pre><?php echo $getInquirieInfoById['comments_text']?></pre></p>
+                          </div>
+                      </div>
+
+                      <div class="card" style="margin-bottom: 25px;text-align: left">
+                          <div class="card-header">
+                              Actions: <?php
+
+                              if($getInquirieInfoById['actions_title']){
+                                  $actions_title_arr = json_decode($getInquirieInfoById['actions_title'],true);
+
+                                  foreach ($actions_title_arr as $value){
+                                      echo "<span class='badge badge-secondary'>$value</span>&nbsp";
+                                  }
+                              }
+
+
+                              ?>
+                          </div>
+                          <div class="card-body">
+                              <!--<h5 class="card-title">Special title treatment</h5>-->
+                              <p class="card-text"><pre id="submit_show_actions_text"><?php echo $getInquirieInfoById['submit_show_actions_text']?></pre></p>
+                          </div>
+                      </div>
+
+                      <div class="card" style="text-align: left">
+                          <div class="card-header">
+                              Files: <?php echo $getInquirieInfoById['files_title']?>
+                          </div>
+                          <!--<div class="card-body">
+                    <p class="card-text"><pre><?php /*echo $getInquirieInfoById['files_text']*/?></pre></p>
+                </div>-->
+
+                          <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="customFile">
+                              <label class="custom-file-label" for="customFile">Choose files</label>
+                          </div>
+                      </div>
+
+
+                  </div>
+
+
+
+
+              </div>
+
+
+          </fieldset>
+
+
+      </div>
+
+
+
+
+
+  </section>
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+      function Init_Set() {
+          alert("即将初始化组队及选志愿!");
+          $.ajax({
+              type: 'POST',
+              url: './web_ajax.php',
+              data : {action:"init_set"},
+              dataType: 'json',
+              success: function (data) {
+                  if(data.code == 200){
+                      alert("初始化成功");
+                      window.location.href="./web.php";
+                  }else{
+                      alert("初始化失败");
+                      window.location.href="./web.php";
+                  }
+              },
+              error: function (xhr, type) {
+
+              }
+          });
+      }
+
+      $('#submit_show_actions_text a').each(function() {
+          // 获取当前a标签的href属性
+          var href = $(this).attr('href');
+
+          href = href.replace("./", "../../inquiry/");
+          // 添加自定义字符串并更新href属性
+          $(this).attr('href', href + '&view=true');
+      });
+
+    </script>
+
+</BODY>
+</HTML>
