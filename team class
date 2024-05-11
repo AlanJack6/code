@@ -1,0 +1,1497 @@
+<?php
+
+class teams extends Dbh {
+
+
+    /**
+     * 保存用户信息
+     * @param $userid
+     * @param $arr
+     * @return array
+     */
+    public function saveClientInfoById($userid,$arr){
+        $users_name = $arr['users_name'];
+        $users_email = $arr['users_email'];
+        $users_number = $arr['users_number'];
+        $users_tel = $arr['users_tel'];
+
+        $self_introduction_title = $arr['self_introduction_title'];
+        $self_introduction_text = $arr['self_introduction_text'];
+        $hobbies_abilities_title = $arr['hobbies_abilities_title'];
+        $hobbies_abilities_text = $arr['hobbies_abilities_text'];
+
+        $stmt = $this->connect()->prepare("UPDATE users 
+SET users_name=?,users_email= ? ,users_number=?,users_tel=?,self_introduction_title=?,self_introduction_text=?,
+hobbies_abilities_title=?,hobbies_abilities_text=?
+WHERE users_id = ? ");
+        if (!$stmt->execute(array($users_name,$users_email,$users_number,$users_tel,$self_introduction_title,$self_introduction_text,$hobbies_abilities_title,$hobbies_abilities_text,$userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->execute();
+
+        return [200,"",$result];
+
+    }
+
+    /**
+     * 获取前20人
+     * @param $userid
+     * @return array
+     */
+    public function get20Users($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM users 
+limit 0,20");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $get2personteam_arr = $this->get2personteam_arr();
+
+        $return_arr = [];
+        foreach ($result as $key=>$value){
+
+            if(!in_array($result[$key]['users_id'],$get2personteam_arr[2])){
+                if($result[$key]['users_id']== $userid){
+                    $result[$key]['myself'] = 1;
+                }else{
+                    $result[$key]['myself'] = 0;
+                }
+
+                array_push($return_arr,$result[$key]);
+            }
+
+        }
+
+        return [200,"",$return_arr];
+
+    }
+
+    /**
+     * 组队两人组
+     * @param $arr
+     * @return array
+     */
+    public function teamup2person($arr){
+        $stmt = $this->connect()->prepare('INSERT INTO 2personteam (user1_id,user2_id,json_str, createtime) VALUES (?,?,?, ?);');
+        if (!$stmt->execute(array($arr[0], $arr[1], json_encode($arr,320),time()))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        return [200,"success"];
+    }
+
+
+    /**
+     * 组队四人组
+     * @param $arr
+     * @return array
+     */
+    public function teamup4person($arr){
+
+        $teamup4person_arr = $arr;
+
+        foreach ($arr as $key=>$value){
+            $get2personteaminfo_byid = $this->get2personteaminfo_byid($value);
+            $user1_id = $get2personteaminfo_byid[2]['user1_id'];
+            $user2_id = $get2personteaminfo_byid[2]['user2_id'];
+            array_push($teamup4person_arr,$user1_id,$user2_id);
+        }
+
+        $stmt = $this->connect()->prepare('INSERT INTO 4personteam (2personteamid_1,2personteamid_2,t1_user1_id,t1_user2_id,t2_user1_id,t2_user2_id,json_str, createtime) VALUES (?,?,?,?,?,?,?, ?);');
+        if (!$stmt->execute(array($teamup4person_arr[0], $teamup4person_arr[1], $teamup4person_arr[2], $teamup4person_arr[3], $teamup4person_arr[4],$teamup4person_arr[5],json_encode($teamup4person_arr,320),time()))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        return [200,"success"];
+    }
+
+    /**
+     * 获取2人组队人员集合数组
+     * @return array
+     */
+    public function get2personteam_arr(){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $personteam_arr = [];
+        foreach ($result as $key=>$value){
+            array_push($personteam_arr,$value['user1_id']);
+            array_push($personteam_arr,$value['user2_id']);
+
+        }
+
+        return [200,"",$personteam_arr];
+    }
+
+    /**
+     * 获取4人组队 队伍集合数组
+     * @return array
+     */
+    public function get4personteam_arr(){
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $personteam_arr = [];
+        foreach ($result as $key=>$value){
+            array_push($personteam_arr,$value['2personteamid_1']);
+            array_push($personteam_arr,$value['2personteamid_2']);
+
+        }
+
+        return [200,"",$personteam_arr];
+    }
+
+    /**
+     *获取4人组队 人员集合数组
+     * @return array
+     */
+    public function get4personteamUser_arr(){
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $personteam_arr = [];
+        foreach ($result as $key=>$value){
+            array_push($personteam_arr,$value['t1_user1_id']);
+            array_push($personteam_arr,$value['t1_user2_id']);
+            array_push($personteam_arr,$value['t2_user1_id']);
+            array_push($personteam_arr,$value['t2_user2_id']);
+        }
+
+        return [200,"",$personteam_arr];
+    }
+
+
+
+    /**
+     * 获取2人组队人员列表
+     * @param string $personteamid 4人组id
+     * @return array
+     */
+    public function get2personteam_list($personteamid=''){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $inquiries = new inquiries();
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if($personteamid!=''){
+
+            $get4personteam_arr = $this->get4personteam_arr();
+
+            $return_arr = [];
+            foreach ($result as $key=>$value){
+
+                if(!in_array($result[$key]['id'],$get4personteam_arr[2])){
+                    if($result[$key]['id']== $personteamid){
+                        $result[$key]['myself'] = 1;
+                    }else{
+                        $result[$key]['myself'] = 0;
+                    }
+
+                    $getUser1InfoById = $inquiries->getUserInfoById($value['user1_id']);
+                    $getUser2InfoById = $inquiries->getUserInfoById($value['user2_id']);
+                    $result[$key]['user1_info'] = $getUser1InfoById[2];
+                    $result[$key]['user2_info'] = $getUser2InfoById[2];
+
+                    array_push($return_arr,$result[$key]);
+                }
+
+            }
+
+            return [200,"",$return_arr];
+        }else{
+            foreach ($result as $key=>$value){
+                $getUser1InfoById = $inquiries->getUserInfoById($value['user1_id']);
+                $getUser2InfoById = $inquiries->getUserInfoById($value['user2_id']);
+                $result[$key]['user1_info'] = $getUser1InfoById[2];
+                $result[$key]['user2_info'] = $getUser2InfoById[2];
+            }
+        }
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取 排除已经4人组队的 2人组列表
+     * @return array
+     */
+    public function get2personteam_list_exclude_to4(){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $inquiries = new inquiries();
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $get4personteam_arr = $this->get4personteam_arr();
+
+        $return_arr = [];
+        foreach ($result as $key=>$value){
+
+            if(!in_array($result[$key]['id'],$get4personteam_arr[2])){
+
+                $getUser1InfoById = $inquiries->getUserInfoById($value['user1_id']);
+                $getUser2InfoById = $inquiries->getUserInfoById($value['user2_id']);
+                $result[$key]['user1_info'] = $getUser1InfoById[2];
+                $result[$key]['user2_info'] = $getUser2InfoById[2];
+
+                array_push($return_arr,$result[$key]);
+            }
+
+        }
+
+        return [200,"",$return_arr];
+
+    }
+
+    /**
+     * 获取4人组队人员列表
+     * @param string $personteamid 4人组id
+     * @return array
+     */
+    public function get4personteam_list($personteamid=''){
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $inquiries = new inquiries();
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if($personteamid!=''){
+
+
+        }else{
+            foreach ($result as $key=>$value){
+                $getT1User1InfoById = $inquiries->getUserInfoById($value['t1_user1_id']);
+                $getT1User2InfoById = $inquiries->getUserInfoById($value['t1_user2_id']);
+                $getT2User1InfoById = $inquiries->getUserInfoById($value['t2_user1_id']);
+                $getT2User2InfoById = $inquiries->getUserInfoById($value['t2_user2_id']);
+                $result[$key]['t1_user1_info'] = $getT1User1InfoById[2];
+                $result[$key]['t1_user2_info'] = $getT1User2InfoById[2];
+                $result[$key]['t2_user1_info'] = $getT2User1InfoById[2];
+                $result[$key]['t2_user2_info'] = $getT2User2InfoById[2];
+            }
+        }
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取2人组信息通过用户id
+     * @param $userid
+     * @return array
+     */
+    public function get2personteamid_byuserid($userid){
+
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam WHERE user1_id=? OR user2_id=?");
+        if (!$stmt->execute(array($userid,$userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+/*
+
+        echo $stmt->debugDumpParams();
+        exit;*/
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+
+    /**
+     * 获取2人组信息通过id
+     * @param $id
+     * @return array
+     */
+    public function get2personteaminfo_byid($id){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam WHERE id=?");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 判定用户是否已经组队
+     * @param $userid
+     * @param $type
+     * @return bool
+     */
+    public function checkUserExistTeam($userid,$type){
+
+        if($type==2){
+            $get2personteam_arr = $this->get2personteam_arr();
+
+            if(in_array($userid,$get2personteam_arr[2])){
+               return true;
+            }
+            return false;
+
+        }elseif($type==4){
+            $get4personteam_arr = $this->get4personteamUser_arr();
+            if(in_array($userid,$get4personteam_arr[2])){
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * 获取2人组组队个数
+     * @return array|mixed
+     */
+    public function get2personteamNum(){
+        $stmt = $this->connect()->prepare("SELECT count(0) as num FROM 2personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    /**
+     * 获取2人组组队个数
+     * @return array|mixed
+     */
+    public function get4personteamNum(){
+        $stmt = $this->connect()->prepare("SELECT count(0) as num FROM 4personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+
+    public function check_exist_5personteam(){
+        $stmt = $this->connect()->prepare("SELECT count(0) num FROM 5personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+        if($result['num'] != 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * 随机打乱一组 合并到其他4人组 形成5人组 入库
+     * @return array
+     */
+    public function random_create5personteam(){
+
+        if($this->check_exist_5personteam()){
+            return [200,"success"];
+        }
+
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if(empty($result)){
+            return ;
+        }
+        $randomIndex = array_rand($result);
+
+        $randomElement = $result[$randomIndex];
+
+        // 使用array_splice()函数删除指定位置的元素并重新排序索引
+        array_splice($result, $randomIndex, 1);
+
+        $five_personteam_arr =array();
+        $time =time();
+        foreach ($result as $key => $value){
+
+            $result[$key]['4personteamid_1'] = $value['id'];
+            $result[$key]['4personteamid_2'] = $randomElement['id'];
+            if($key==0){
+                $result[$key]['t3_user1_id'] = $randomElement['t1_user1_id'];
+            }elseif ($key==1){
+                $result[$key]['t3_user1_id'] = $randomElement['t1_user2_id'];
+
+            }elseif ($key==2){
+                $result[$key]['t3_user1_id'] = $randomElement['t2_user1_id'];
+
+            }elseif ($key==3){
+                $result[$key]['t3_user1_id'] = $randomElement['t2_user2_id'];
+            }
+
+            unset($result[$key]['id']);
+            unset($result[$key]['2personteamid_1']);
+            unset($result[$key]['2personteamid_2']);
+            $result[$key]['createtime'] = $time;
+            $result[$key]['json_str'] = json_encode([$result[$key]['t1_user1_id'],$result[$key]['t1_user2_id'],$result[$key]['t2_user1_id'],$result[$key]['t2_user2_id'],$result[$key]['t3_user1_id']]);
+            array_push($five_personteam_arr,$result[$key]);
+        }
+
+        foreach ($five_personteam_arr as $key=>$value){
+            $stmt = $this->connect()->prepare('INSERT INTO 5personteam 
+(t1_user1_id,t1_user2_id,t2_user1_id,t2_user2_id,json_str,createtime,4personteamid_1, 4personteamid_2,t3_user1_id) 
+VALUES (?,?,?,?,?,?,?, ?, ?);');
+            if (!$stmt->execute(array($value['t1_user1_id'], $value['t1_user2_id'], $value['t2_user1_id'], $value['t2_user2_id'], $value['json_str'],$value['createtime'],$value['4personteamid_1'],$value['4personteamid_2'],$value['t3_user1_id']))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+        }
+
+        return [200,"success"];
+
+    }
+
+    /**
+     * 获取5人组信息列表
+     * @return array
+     */
+    public function get5personteam_list(){
+
+        $this->random_create5personteam();
+
+        $stmt = $this->connect()->prepare("SELECT * FROM 5personteam");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $inquiries = new inquiries();
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($result as $key=>$value){
+            $getT1User1InfoById = $inquiries->getUserInfoById($value['t1_user1_id']);
+            $getT1User2InfoById = $inquiries->getUserInfoById($value['t1_user2_id']);
+            $getT2User1InfoById = $inquiries->getUserInfoById($value['t2_user1_id']);
+            $getT2User2InfoById = $inquiries->getUserInfoById($value['t2_user2_id']);
+            $getT3User1InfoById = $inquiries->getUserInfoById($value['t3_user1_id']);
+            $result[$key]['t1_user1_info'] = $getT1User1InfoById[2];
+            $result[$key]['t1_user2_info'] = $getT1User2InfoById[2];
+            $result[$key]['t2_user1_info'] = $getT2User1InfoById[2];
+            $result[$key]['t2_user2_info'] = $getT2User2InfoById[2];
+            $result[$key]['t3_user1_info'] = $getT3User1InfoById[2];
+        }
+
+        return [200,"",$result];
+    }
+
+
+    /**
+     * 获取5人队伍信息通过userid
+     * @param $userid
+     * @return array
+     */
+    public function get5personteam_by_userid($userid,$id=''){
+
+        $this->random_create5personteam();
+
+        if($id!=''){
+            $stmt = $this->connect()->prepare("SELECT * FROM 5personteam WHERE id =?");
+            if (!$stmt->execute(array($id))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+        }else{
+            $stmt = $this->connect()->prepare("SELECT * FROM 5personteam WHERE t1_user1_id =? OR t1_user2_id=? OR t2_user1_id=? OR t2_user2_id=? OR t3_user1_id=?");
+            if (!$stmt->execute(array($userid,$userid,$userid,$userid,$userid))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+        }
+
+
+        $inquiries = new inquiries();
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($result as $key=>$value){
+            $getT1User1InfoById = $inquiries->getUserInfoById($value['t1_user1_id']);
+            $getT1User2InfoById = $inquiries->getUserInfoById($value['t1_user2_id']);
+            $getT2User1InfoById = $inquiries->getUserInfoById($value['t2_user1_id']);
+            $getT2User2InfoById = $inquiries->getUserInfoById($value['t2_user2_id']);
+            $getT3User1InfoById = $inquiries->getUserInfoById($value['t3_user1_id']);
+            $result[$key]['t1_user1_info'] = $getT1User1InfoById[2];
+            $result[$key]['t1_user2_info'] = $getT1User2InfoById[2];
+            $result[$key]['t2_user1_info'] = $getT2User1InfoById[2];
+            $result[$key]['t2_user2_info'] = $getT2User2InfoById[2];
+            $result[$key]['t3_user1_info'] = $getT3User1InfoById[2];
+        }
+
+        if(isset($result[0])){
+            return [200,"",$result[0]];
+        }else{
+            return [200,"",$result];
+        }
+
+    }
+
+    /**
+     * 保存组信息
+     * @param $team_id
+     * @param $arr
+     * @return array
+     */
+    public function saveTeamInfoById($team_id,$arr){
+
+        $team_introduction_title = $arr['team_introduction_title'];
+        $team_introduction_text = $arr['team_introduction_text'];
+        $hobbies_abilities_title = $arr['hobbies_abilities_title'];
+        $hobbies_abilities_text = $arr['hobbies_abilities_text'];
+
+        $stmt = $this->connect()->prepare("UPDATE 5personteam 
+SET team_introduction_title=?,team_introduction_text= ? ,hobbies_abilities_title=?,hobbies_abilities_text=?
+WHERE id = ? ");
+        if (!$stmt->execute(array($team_introduction_title,$team_introduction_text,$hobbies_abilities_title,$hobbies_abilities_text,$team_id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->execute();
+
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 队伍存志愿
+     * @param $teamid
+     * @param $arr
+     * @return array
+     */
+    public function saveteamproject($teamid,$arr){
+        $stmt = $this->connect()->prepare('INSERT INTO teamproject (teamid,order_1,order_2, order_3,order_4) VALUES (?,?,?,?, ?);');
+        if (!$stmt->execute(array($teamid,$arr[0], $arr[1], $arr[2],$arr[3]))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $this->clash_project();
+        return [200,"success"];
+    }
+
+    /**
+     * 获取队伍志愿
+     * @param $teamid
+     * @return array
+     */
+    public function getteamproject($teamid){
+        $stmt = $this->connect()->prepare("SELECT * FROM teamproject WHERE teamid=?");
+        if (!$stmt->execute(array($teamid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 志愿角度对应队伍
+     * @return array
+     */
+    public function getallteamproject(){
+        $stmt = $this->connect()->prepare("SELECT teamid FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $return_arr['team_id_info'] = $result;
+
+        $stmt = $this->connect()->prepare("SELECT order_1 FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $return_arr['team_order_1_info'] = $result;
+
+        $stmt = $this->connect()->prepare("SELECT order_2 FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $return_arr['team_order_2_info'] = $result;
+
+        $stmt = $this->connect()->prepare("SELECT order_3 FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $return_arr['team_order_3_info'] = $result;
+
+        $stmt = $this->connect()->prepare("SELECT order_4 FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $return_arr['team_order_4_info'] = $result;
+
+        $this->clash_project();
+        return $return_arr;
+    }
+
+
+
+    /**
+     * 冲突项目
+     * @return array
+     */
+    public function clash_project(){
+
+        $project_ids = [1,2,3,4];
+
+        //project 1
+        $stmt = $this->connect()->prepare("SELECT teamid FROM teamproject WHERE order_1 =?");
+        if (!$stmt->execute(array($project_ids[0]))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if(count($result)>1){
+            foreach ($result as $key => $value){
+
+                if(!$this->check_clash_exist($value['teamid'],$project_ids[0])){
+                    $stmt = $this->connect()->prepare('INSERT INTO clash_team_project (teamid,projectid) VALUES (?,?);');
+                    if (!$stmt->execute(array($value['teamid'], $project_ids[0]))){
+                        $stmt = null;
+                        return [500,"db error"];
+                    }
+                }
+
+            }
+        }
+
+
+        //project 2
+        $stmt = $this->connect()->prepare("SELECT teamid FROM teamproject WHERE order_2 =?");
+        if (!$stmt->execute(array($project_ids[1]))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(count($result)>1){
+            foreach ($result as $key => $value){
+
+                if(!$this->check_clash_exist($value['teamid'],$project_ids[1])){
+                    $stmt = $this->connect()->prepare('INSERT INTO clash_team_project (teamid,projectid) VALUES (?,?);');
+                    if (!$stmt->execute(array($value['teamid'], $project_ids[1]))){
+                        $stmt = null;
+                        return [500,"db error"];
+                    }
+                }
+
+            }
+        }
+
+        //project 3
+        $stmt = $this->connect()->prepare("SELECT teamid FROM teamproject WHERE order_3 =?");
+        if (!$stmt->execute(array($project_ids[2]))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(count($result)>1){
+            foreach ($result as $key => $value){
+                if(!$this->check_clash_exist($value['teamid'],$project_ids[2])){
+                    $stmt = $this->connect()->prepare('INSERT INTO clash_team_project (teamid,projectid) VALUES (?,?);');
+                    if (!$stmt->execute(array($value['teamid'], $project_ids[2]))){
+                        $stmt = null;
+                        return [500,"db error"];
+                    }
+                }
+            }
+        }
+
+
+        //project 4
+        $stmt = $this->connect()->prepare("SELECT teamid FROM teamproject WHERE order_4 =?");
+        if (!$stmt->execute(array($project_ids[3]))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+        if(count($result)>1){
+            foreach ($result as $key => $value){
+                if(!$this->check_clash_exist($value['teamid'],$project_ids[3])){
+                    $stmt = $this->connect()->prepare('INSERT INTO clash_team_project (teamid,projectid) VALUES (?,?);');
+                    if (!$stmt->execute(array($value['teamid'], $project_ids[3]))){
+                        $stmt = null;
+                        return [500,"db error"];
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 是否有冲突项目
+     * @param $teamid
+     * @param $projectid
+     * @return array|bool
+     */
+    public function check_clash_exist($teamid,$projectid){
+        $stmt = $this->connect()->prepare("SELECT * FROM clash_team_project WHERE teamid=? and projectid=?");
+        if (!$stmt->execute(array($teamid,$projectid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        if($result){
+           return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 根据组id获取冲突项目
+     * @param $teamid
+     * @return array
+     */
+    public function get_clash_project($teamid){
+        $stmt = $this->connect()->prepare("SELECT * FROM clash_team_project WHERE teamid=?");
+        if (!$stmt->execute(array($teamid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取冲突项目通过id
+     * @param $id
+     * @return array
+     */
+    public function get_clash_project_byid($id){
+        $stmt = $this->connect()->prepare("SELECT * FROM clash_team_project WHERE id=?");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 保存冲突项目说明
+     * @param $id
+     * @param $arr
+     * @return array
+     */
+    public function saveClashProjectById($id,$arr){
+        $why_choose_project_title = $arr['why_choose_project_title'];
+        $why_choose_project_text = $arr['why_choose_project_text'];
+
+        $stmt = $this->connect()->prepare("UPDATE clash_team_project 
+SET why_choose_project_title=?,why_choose_project_text= ?
+WHERE id = ? ");
+        if (!$stmt->execute(array($why_choose_project_title,$why_choose_project_text,$id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->execute();
+
+        return [200,"",$result];
+    }
+
+
+    /**
+     * 冲突情况时 志愿角度对应队伍
+     * @return array
+     */
+    public function getallteamprojectwhy(){
+        $stmt = $this->connect()->prepare("SELECT * FROM clash_team_project order by projectid");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取项目
+     * @return array
+     */
+    public function get_project(){
+        $project_arr = [
+            '<P><FONT COLOR="#330033">1) <B><I>Constructing an EPSS Interface for a
+                                        Bank Teller Application</I></B></FONT>&nbsp;
+                            <BR><FONT COLOR="#330033">&nbsp;&nbsp;&nbsp; [ <A HREF="s300/f99p1_info.html">Project
+                                    Information</A> | </FONT>PBL Space: <FONT COLOR="#330033"><A HREF="s300/s300f99p1/index.html">S300F99P1</A></FONT>
+                            ]&nbsp;',
+            '<P><FONT COLOR="#330033">2) <B><I>Developing a Minimalist Approach to Learning
+                                        GUI Design &amp; Implementation</I></B></FONT>&nbsp;
+                            <BR>&nbsp;&nbsp;&nbsp; <FONT COLOR="#330033">[</FONT> <FONT COLOR="#330033"><A HREF="s300/f99p2_info.html">Project
+                                    Information</A> | PBL Space: <A HREF="s300/s300f99p2/index.html">S300F99P2</A>
+                                ]</FONT>&nbsp;',
+            '<P><FONT COLOR="#330033">3) <B><I>Building Constructivist\'s Learning into
+                                        Web-Based Course-Support Environment</I></B></FONT>&nbsp;
+                            <BR><FONT COLOR="#330033">&nbsp;&nbsp;&nbsp; [ <A HREF="s300/f99p3_info.html">Project
+                                    Information</A> | PBL Space: <A HREF="s300/s300f99p3/index.html">S300F99P3</A>
+                                ]</FONT>&nbsp;',
+            '<P><FONT COLOR="#330033">4) <B><I>Designing WWW-Enabled Scafolding Support
+                                        into Freshman Progamming Courses</I></B></FONT>&nbsp;
+                            <BR><FONT COLOR="#330033">&nbsp;&nbsp;&nbsp; [ <A HREF="s300/f99p4_info.html">Project
+                                    Information</A> | PBL Space: <A HREF="s300/s300f99p4/index.html">S300F99P4</A>
+                                ]</FONT>&nbsp;
+                            <BR>&nbsp;'
+        ];
+        return $project_arr;
+    }
+
+
+    /**
+     * 队伍角度对应志愿顺序
+     * @return array
+     */
+    public function getallteamorderproject(){
+        $stmt = $this->connect()->prepare("SELECT * FROM teamproject order by id");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+
+    }
+
+    /**
+     * 管理员保存所有队志愿
+     * @param $arr
+     * @return array
+     */
+    public function saveallteamproject($arr){
+
+        foreach ($arr as $key=>$value){
+
+            $stmt = $this->connect()->prepare("UPDATE teamproject 
+SET order_1=?,order_2= ? ,order_3=?,order_4=?,manage_select=?
+WHERE teamid = ? ");
+            if (!$stmt->execute(array($value[1], $value[2],$value[3],$value[4],1,$value[0] ))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+        }
+
+        return [200,""];
+    }
+
+    /**
+     * 判队伍志愿是否是管理员选择
+     * @return array|bool
+     */
+    public function teamprojectismanage_select(){
+        $stmt = $this->connect()->prepare("SELECT manage_select FROM teamproject");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+        if($result['manage_select'] ==1){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    public function init_set(){
+        $stmt = $this->connect()->prepare("truncate 2personteam;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate 4personteam;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate 5personteam;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate clash_team_project;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate teamproject;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate 2personteam_request;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate 4personteam_request;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("truncate 2personteam_request_wait;");
+        if (!$stmt->execute(array())){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        return [200,"success"];
+
+    }
+
+    /**
+     * 获取2人组请求通过用户2id
+     * @param $userid
+     * @return array
+     */
+    public function get2persontemRequestByUser2_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request WHERE status =0 and user2_id=? order by id desc");
+        if (!$stmt->execute(array($userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestUserInfoById = $inquiries->getUserInfoById($item['user1_id']);
+            $result[$index]['user1_id_info'] = $getRequestUserInfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取2人组请求_用户1id
+     * @param $userid
+     * @return array
+     */
+    public function get2persontemRequestByUser1_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request WHERE user1_id=? order by id desc");
+        if (!$stmt->execute(array($userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestUserInfoById = $inquiries->getUserInfoById($item['user2_id']);
+            $result[$index]['user2_id_info'] = $getRequestUserInfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取等待中的组队用户
+     * @param $userid
+     * @return array
+     */
+    public function get2persontemWaitByUser1_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request_wait WHERE user1_id=? order by id desc");
+        if (!$stmt->execute(array($userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestUserInfoById = $inquiries->getUserInfoById($item['user2_id']);
+            $result[$index]['user2_id_info'] = $getRequestUserInfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取2人组历史请求通过用户2id
+     * @param $userid
+     * @return array
+     */
+    public function get2persontemHistoryRequestByUser2_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request WHERE status <>0 and user2_id=? order by id desc");
+        if (!$stmt->execute(array($userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestUserInfoById = $inquiries->getUserInfoById($item['user1_id']);
+            $result[$index]['user1_id_info'] = $getRequestUserInfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+    /**
+     * 组队两人组发送请求
+     * @param $arr
+     * @return array
+     */
+    public function teamup2person_request($arr,$iwant2say){
+
+        $stmt = $this->connect()->prepare('INSERT INTO 2personteam_request (user1_id,user2_id,json_str, createtime,iwant2say) VALUES (?,?,?, ?,?);');
+        if (!$stmt->execute(array($arr[0], $arr[1], json_encode($arr,320),time(),$iwant2say))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        return [200,"success"];
+    }
+
+    /**通过请求id获取2人组的组队请求
+     * @param $id
+     * @return array
+     */
+    public function get2persontemRequestById($id)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request WHERE id=?");
+
+        if (!$stmt->execute(array($id))) {
+            $stmt = null;
+            return [500, "db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        $getRequestUserInfoById = $inquiries->getUserInfoById($result['user1_id']);
+        $result['user1_id_info'] = $getRequestUserInfoById[2];
+
+        return [200, "", $result];
+
+    }
+
+    /**
+     * 同意2人组队请求
+     * @param $id
+     * @return array
+     */
+    public function agree2personteam($id){
+        $get2persontemRequestById = $this->get2persontemRequestById($id);
+        $user1_id = $get2persontemRequestById[2]['user1_id'];
+        $user2_id = $get2persontemRequestById[2]['user2_id'];
+        $json_str = $get2persontemRequestById[2]['json_str'];
+        $createtime = time();
+
+        $checkUser1ExistTeam = $this->checkUserExistTeam($user1_id,2);
+        $checkUser2ExistTeam = $this->checkUserExistTeam($user2_id,2);
+
+        //都没组队的情况下
+        if(!$checkUser1ExistTeam && !$checkUser2ExistTeam){
+            $stmt = $this->connect()->prepare("UPDATE 2personteam_request 
+SET status=1 WHERE id = ? ");
+            if (!$stmt->execute(array($id))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+            $result = @$stmt->execute();
+
+            $stmt = $this->connect()->prepare('INSERT INTO 2personteam (user1_id,user2_id,json_str, createtime) VALUES (?,?,?, ?);');
+            if (!$stmt->execute(array($user1_id, $user2_id, $json_str,$createtime))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+
+            return [200,"success"];
+        }
+
+    }
+
+
+    /**
+     * 同意排队等待用户2人组队
+     * @param $id
+     * @param $_2personteam_request_id
+     * @return array
+     */
+    public function waitto_agree2personteam($id,$_2personteam_request_id){
+        $stmt = $this->connect()->prepare("delete from 2personteam_request_wait 
+WHERE id=?");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->execute();
+
+        return $this->agree2personteam($_2personteam_request_id);
+    }
+
+
+    /**
+     * 主申请人把被请求人 送入等待
+     * @param $id
+     * @param $user1_id
+     * @return array
+     */
+    public function waitting2personteam($id,$user1_id){
+
+        $stmt = $this->connect()->prepare("delete from 2personteam_request_wait 
+WHERE user1_id=?");
+        if (!$stmt->execute(array($user1_id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->execute();
+
+        $stmt = $this->connect()->prepare("SELECT * FROM 2personteam_request WHERE $id=?");
+        if (!$stmt->execute(array($id))) {
+            $stmt = null;
+            return [500, "db error"];
+        }
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = $this->connect()->prepare('INSERT INTO 2personteam_request_wait (user1_id,user2_id,json_str, createtime,status,iwant2say,2personteam_request_id) VALUES (?,?,?, ?,?, ?,?);');
+        if (!$stmt->execute(array($result['user1_id'], $result['user2_id'], $result['json_str'],$result['createtime'],$result['status'],$result['iwant2say'],$result['id']))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $stmt = $this->connect()->prepare("UPDATE 2personteam_request 
+SET status=4 WHERE id = ? ");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->execute();
+
+        return [200,"success"];
+    }
+
+
+    /**
+     * 同意2人组队请求
+     * @param $id
+     * @return array
+     */
+    public function agree2personteambyreceive($id){
+
+        $stmt = $this->connect()->prepare("UPDATE 2personteam_request 
+SET status=3 WHERE id = ? ");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        $result = @$stmt->execute();
+        return [200,"success"];
+
+    }
+
+    /**
+     * 拒绝2人组队请求
+     * @param $id
+     * @return array
+     */
+    public function refuse2personteam($id){
+        $stmt = $this->connect()->prepare("UPDATE 2personteam_request 
+SET status=2 WHERE id = ? ");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->execute();
+
+        return [200, "", $result];
+    }
+
+
+    /**
+     * 组队两人组发送请求
+     * @param $arr
+     * @return array
+     */
+    public function teamup4person_request($arr,$iwant2say){
+
+        $teamup4person_arr = $arr;
+
+        foreach ($arr as $key=>$value){
+            $get2personteaminfo_byid = $this->get2personteaminfo_byid($value);
+            $user1_id = $get2personteaminfo_byid[2]['user1_id'];
+            $user2_id = $get2personteaminfo_byid[2]['user2_id'];
+            array_push($teamup4person_arr,$user1_id,$user2_id);
+        }
+
+        $stmt = $this->connect()->prepare('INSERT INTO 4personteam_request (2personteamid_1,2personteamid_2,t1_user1_id,t1_user2_id,t2_user1_id,t2_user2_id,json_str, createtime,iwant2say) VALUES (?,?,?,?,?,?,?, ?,?);');
+        if (!$stmt->execute(array($teamup4person_arr[0], $teamup4person_arr[1], $teamup4person_arr[2], $teamup4person_arr[3], $teamup4person_arr[4],$teamup4person_arr[5],json_encode($teamup4person_arr,320),time(),$iwant2say))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        return [200,"success"];
+
+    }
+
+    /**
+     * 获取2人组请求通过用户2id
+     * @param $userid
+     * @return array
+     */
+    public function get4persontemRequestByT2User_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam_request WHERE status =0 and (t2_user1_id=? or t2_user2_id =?) order by id desc");
+        if (!$stmt->execute(array($userid,$userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestT1User1InfoById = $inquiries->getUserInfoById($item['t1_user1_id']);
+            $result[$index]['t1_user1_id_info'] = $getRequestT1User1InfoById[2];
+
+            $getRequestT1User2InfoById = $inquiries->getUserInfoById($item['t1_user2_id']);
+            $result[$index]['t1_user2_id_info'] = $getRequestT1User2InfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+    /**
+     * 获取2人组历史请求通过用户2id
+     * @param $userid
+     * @return array
+     */
+    public function get4persontemHistoryRequestByT2User_id($userid){
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam_request WHERE status <>0 and (t2_user1_id=? or t2_user2_id =?) order by id desc");
+        if (!$stmt->execute(array($userid,$userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        foreach ($result as $index => $item) {
+            $getRequestT1User1InfoById = $inquiries->getUserInfoById($item['t1_user1_id']);
+            $result[$index]['t1_user1_id_info'] = $getRequestT1User1InfoById[2];
+
+            $getRequestT1User2InfoById = $inquiries->getUserInfoById($item['t1_user2_id']);
+            $result[$index]['t1_user2_id_info'] = $getRequestT1User2InfoById[2];
+
+        }
+        return [200,"",$result];
+    }
+
+
+    /**通过请求id获取2人组的组队请求
+     * @param $id
+     * @return array
+     */
+    public function get4persontemRequestById($id)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam_request WHERE id=?");
+
+        if (!$stmt->execute(array($id))) {
+            $stmt = null;
+            return [500, "db error"];
+        }
+
+        /*
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        $inquiries = new inquiries();
+
+        $getRequestT1User1InfoById = $inquiries->getUserInfoById($result['t1_user1_id']);
+        $result['t1_user1_id_info'] = $getRequestT1User1InfoById[2];
+
+        $getRequestT1User2InfoById = $inquiries->getUserInfoById($result['t1_user2_id']);
+        $result['t1_user2_id_info'] = $getRequestT1User2InfoById[2];
+
+        return [200, "", $result];
+
+    }
+
+    /**
+     * 同意4人组队请求
+     * @param $id
+     * @return array
+     */
+    public function agree4personteam($id){
+
+        $get4persontemRequestById = $this->get4persontemRequestById($id);
+
+        $_2personteamid_1 = $get4persontemRequestById[2]['2personteamid_1'];
+        $_2personteamid_2 = $get4persontemRequestById[2]['2personteamid_2'];
+        $t1_user1_id = $get4persontemRequestById[2]['t1_user1_id'];
+        $t1_user2_id = $get4persontemRequestById[2]['t1_user2_id'];
+        $t2_user1_id = $get4persontemRequestById[2]['t2_user1_id'];
+        $t2_user2_id = $get4persontemRequestById[2]['t2_user2_id'];
+        $json_str = $get4persontemRequestById[2]['json_str'];
+
+        $checkT1User1ExistTeam = $this->checkUserExistTeam($t1_user1_id,4);
+        $checkT1User2ExistTeam = $this->checkUserExistTeam($t1_user2_id,4);
+        $checkT2User1ExistTeam = $this->checkUserExistTeam($t2_user1_id,4);
+        $checkT2User2ExistTeam = $this->checkUserExistTeam($t2_user2_id,4);
+
+        //都没组队的情况下
+        if(!$checkT1User1ExistTeam && !$checkT1User2ExistTeam && !$checkT2User1ExistTeam && !$checkT2User2ExistTeam){
+            $stmt = $this->connect()->prepare("UPDATE 4personteam_request 
+SET status=1 WHERE id = ? ");
+            if (!$stmt->execute(array($id))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+            $result = @$stmt->execute();
+
+            $stmt = $this->connect()->prepare('INSERT INTO 4personteam (2personteamid_1,2personteamid_2,t1_user1_id,t1_user2_id,t2_user1_id,t2_user2_id,json_str, createtime) VALUES (?,?,?,?,?,?,?, ?);');
+
+            if (!$stmt->execute(array($_2personteamid_1, $_2personteamid_2, $t1_user1_id, $t1_user2_id, $t2_user1_id,$t2_user2_id,$json_str,time()))){
+                $stmt = null;
+                return [500,"db error"];
+            }
+
+            return [200,"success"];
+        }
+
+    }
+
+    /**
+     * 拒绝4人组队请求
+     * @param $id
+     * @return array
+     */
+    public function refuse4personteam($id){
+        $stmt = $this->connect()->prepare("UPDATE 4personteam_request 
+SET status=2 WHERE id = ? ");
+        if (!$stmt->execute(array($id))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+
+        $result = @$stmt->execute();
+
+        return [200, "", $result];
+    }
+
+
+    /**
+     * 获取4人组信息通过用户id
+     * @param $userid
+     * @return array
+     */
+    public function get4personteamid_byuserid($userid){
+
+        $stmt = $this->connect()->prepare("SELECT * FROM 4personteam WHERE t1_user1_id=? OR t1_user2_id=? OR t2_user1_id=? OR t2_user2_id=?");
+        if (!$stmt->execute(array($userid,$userid,$userid,$userid))){
+            $stmt = null;
+            return [500,"db error"];
+        }
+        /*
+
+                echo $stmt->debugDumpParams();
+                exit;*/
+        $result = @$stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [200,"",$result];
+    }
+
+}
+?>
