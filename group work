@@ -1,0 +1,285 @@
+<?php
+include "../classes/dbh.classes.php";
+include "../classes/inquiries.classes.php";
+
+
+session_start();
+@$userid = $_SESSION["userid"];
+$inquiries = new inquiries();
+
+$getUserInquiriesClosedList = $inquiries->getUserInquiriesClosedList($userid);
+
+if($getUserInquiriesClosedList[0]==200){
+    $getUserInquiriesClosedList = $getUserInquiriesClosedList[2];
+}else{
+    $getUserInquiriesClosedList = null;
+}
+
+
+$getUserInquiriesPendingList = $inquiries->getUserInquiriesPendingList($userid);
+
+if($getUserInquiriesPendingList[0]==200){
+    $getUserInquiriesPendingList = $getUserInquiriesPendingList[2];
+}else{
+    $getUserInquiriesPendingList = null;
+}
+
+?>
+
+<HTML>
+  <HEAD>
+    <meta name="viewport" content="with=device-width, initial-scale=1.0"><!---网站初始比例--->
+    <title>inquiry space</title>
+    <link rel="stylesheet" href="inq.css">
+    <META HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=edge; charset=UTF-8">
+    <META NAME="Author" CONTENT="K.H.VAT (Mr)">
+    <META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+       <link rel="stylesheet" href="../css/font-awesome.min.css"><!---符号---->
+
+      <link rel="stylesheet" href="../css/bootstrap.min.css" >
+
+      <script src="../js/jquery_1.9.1_jquery.min.js"></script>
+
+      <script>
+
+          function CreAInq() {
+              $.ajax({
+                  type: 'POST',
+                  url: './HandleInq_aciton.php',
+                  data : {action:"create"},
+                  dataType: 'json',
+                  success: function (data) {
+                      if(data.code == 200){
+                          location.reload();
+                      }else{
+                          window.location.href="../login_form.php";
+                      }
+                  },
+                  error: function (xhr, type) {
+
+                  }
+              });
+          }
+      </script>
+  </HEAD>
+  <BODY>
+
+
+
+    <section class="header">
+      <nav>
+        <a href="../UM/index.html"><img src="../../images/UM_logo_horizontal-2.webp"></a>
+        <div class="nav-links" id="navlinks">
+          <i class="fa fa-times" onclick="hideMenu()"></i>
+          <ul>
+            <li><a href="student.php">Students</a></li>
+            <li><a href="../../teachers/teacher.php">Teachers</a></li>
+            <li><a href="request.php">Inquiry Requests</a></li>
+            <li><a href="../inquiry.php">Inquiry Home</a></li>
+            <li><a href="../real.php">REAL</a></li>
+         <?php 
+        if(isset($_SESSION["userid"]))
+        {
+      ?>
+		<li><a href="#"><?php echo $_SESSION["useruid"]; ?></a></li>
+		<li><a href="../includes/logout.inc.php" class="header-login-a">LOGOUT</a></li>
+		<?php 
+        }
+        else 
+        {
+        ?>
+        <li><a href="../register_form.php">SIGN UP</a></li>
+        <li><a href="../login_form.php" class="header-login-a">LOGIN</a></li>
+        <?php 
+        }
+        ?>
+        </ul>
+      </div>
+        <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+
+      <div class="text-box">
+        <h1>Welcome to the inquiry space</h1>
+        <p style="font-size: 20px;">Here you can manage your inquiries</p>
+      </div>
+    </section>
+
+
+    <section class="degree">
+        <div class="degree-box">
+          <a href="javascript:void(0)" class="hero-btn red-btn"  onclick="CreAInq()">Create an Inquiry</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="event" style="padding-top: 60px">
+
+        <div style="margin-bottom: 80px;">
+            <h4 style="margin-bottom: 30px">Pending Inquiries</h4>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Request</th>
+                    <th scope="col">Reference No.</th>
+<!--                    <th scope="col">Consultant</th>-->
+                    <th scope="col">Received</th>
+                    <th scope="col">Due</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                    if($getUserInquiriesPendingList){
+                        foreach ($getUserInquiriesPendingList as $index =>$value){
+                            ?>
+                            <tr>
+                                <th scope="row"><?php echo $index+1?></th>
+                                <td><a href="<?php echo './inquires_detail.php?id='.$value['id'] ?>">Inquiry <?php echo $value['reference_no']?></a></td>
+<!--                                <td>--><?php //echo $value['consultant']?><!--</td>-->
+                                <td><?php echo $value['received']?></td>
+                                <td><?php echo $value['due']?></td>
+                                <td><?php echo $value['status']?></td>
+                            </tr>
+
+                            <?php
+                        }
+                    }
+
+                ?>
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <div>
+            <h4 style="margin-bottom: 30px">Closed Inquiries</h4>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Reference No.</th>
+                    <!--                    <th scope="col">Consultant</th>-->
+                    <th scope="col">Received</th>
+                    <th scope="col">Due</th>
+                    <th scope="col">Completed on</th>
+                    <th scope="col">Time Usage</th>
+                    <th scope="col">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                if($getUserInquiriesClosedList){
+                    foreach ($getUserInquiriesClosedList as $index =>$value){
+                        ?>
+                        <tr>
+                            <td><a href="<?php echo './inquires_detail.php?id='.$value['id'] ?>">Inquiry <?php echo $value['reference_no']?></a></td>
+                            <!--                                <td>--><?php //echo $value['consultant']?><!--</td>-->
+                            <td><?php echo $value['received']?></td>
+                            <td><?php echo $value['due']?></td>
+                            <td><?php echo $value['completed_on']?></td>
+                            <td><?php echo $value['timeu']?> mins</td>
+                            <td><?php echo $value['status']?></td>
+                        </tr>
+
+                        <?php
+                    }
+                }
+
+                ?>
+                </tbody>
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+
+
+<!-----contact------>
+
+<section class="event">
+<div class="section">
+
+      <h2>Department of Computer and Information Science</h2>
+        <div>
+<div class="board">
+          <span>
+            <b class="fa fa-home"><h6>Address:<br>Room 4040 <br>Faculty of Science and Technology<br>
+            University of Macau,E11<br>Avenida da Universidade<br>Taipa,Macau,Chain</h6></b>
+          </span>
+        </div>
+      <div>
+        <span>
+          <i class="fa fa-phone"><h6>Phone:<br>+853 8822 4963</h6></i>
+        </span>
+      </div>
+      <div>
+        <span>
+          <i class="fa fa-fax"><h6>Fax:<br>+853 8822 2426</h6></i>
+        </span>
+      </div>
+      <div>
+        <i class="fa fa-envelope-o"><h6>fst.enquiry@um.edu.mo</h6></i>
+        <span>
+        </span>
+      </div>
+     </div>
+    <div class="Quick">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="../UM/index.html">UM HOME</a></li>
+            <li><a href="../UM/about.html">Admission to UM</a></li>
+            <li><a href="../UM/index.html">Career@UM</a></li>
+            <li><a href="../UM/index.html">Staff Portal</a></li>
+
+          </ul>
+    </div>
+    <div class="Connect">
+		<h4>Connect with Us</h4>
+		 <section class="connect">
+  <div class="icons">
+    <i class="fa fa-facebook"></i>
+    <i class="fa fa-twitter"></i>
+    <i class="fa fa-instagram"></i>
+    <i class="fa fa-linkedin"></i>
+  </div>
+</section>
+        <h5>Resources</h5>
+        <ul>
+            <li><a href="../UM/index.html">Students</a></li>
+            <li><a href="../UM/about.html">FST Vacancies</a></li>
+          </ul>
+     </div>
+</div>
+
+
+
+
+<!-------Footer-------->
+
+<section class="footer">
+  <p>&copy;2023 University of Macau</p>
+</section>
+
+
+
+<!-------JavaScript for Toggle menu-------->
+    <script>
+
+      var navLinks = document.getElementById("navlinks")
+
+      function showMenu(){
+        navLinks.style.right = "0";
+      }
+      function hideMenu(){
+        navLinks.style.right = "-200px";
+      }
+
+    </script>
+
+</BODY>
+</HTML>
